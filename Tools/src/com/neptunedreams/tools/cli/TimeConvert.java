@@ -21,7 +21,8 @@ public final class TimeConvert {
             long millis = System.currentTimeMillis();
             System.out.println("Converts milliseconds to time");
             System.out.println("Usage: millis <milliseconds> [<milliseconds> ...]");
-            System.out.printf("  at %s (%d)%n", getTime(millis), millis);
+            System.out.printf("  at %s%n  %d ms%n  %d seconds%n", getTime(millis), millis, millis/1000);
+
             return;
         }
         for (String s: args) {
@@ -31,7 +32,7 @@ public final class TimeConvert {
 
     private static String textToTime(String txt) {
         try {
-            long timeMillis = Long.valueOf(txt);
+            long timeMillis = Long.parseLong(txt);
             return getTime(timeMillis);
         } catch (NumberFormatException e) {
             return "Bad input. Time not in milliseconds: " + txt;

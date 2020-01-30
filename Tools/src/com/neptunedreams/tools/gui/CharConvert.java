@@ -84,8 +84,8 @@ public final class CharConvert extends SplitComponent {
         right.setText(propertyToPrettyFormat(decodeAscii(text)));
         enable(left, false);
         enable(right, true);
-        enable(toRight, false);
         enable(toLeft, true);
+        enable(toRight, false);
         right.requestFocus();
     }
 

@@ -8,6 +8,9 @@ import java.util.UUID;
 /**
  * Add this to your ~/.bash_profile
  * alias uuid="java -cp ~/Tools/out/production/Tools com.neptunedreams.tools.cli.UuidGen"
+ * or
+ * alias uuid='java -cp ~/Tools/out/production/Tools com.neptunedreams.tools.cli.UuidGen -c'
+ * alias uuidnc='java -cp ~/Tools/out/production/Tools com.neptunedreams.tools.cli.UuidGen'
  */
 public final class UuidGen {
     private UuidGen() { }
@@ -27,10 +30,10 @@ public final class UuidGen {
 
     private static UuidGen processArgs(String[] args) {
         UuidGen uuidGen = new UuidGen();
-        if (args.length > 0) {
-            if (args[0].contains("h")) {
-                System.out.println("Usage: uuid        Print out a new UUID.\n");
-                System.out.println("       uuid -c     Print out a new UUID and copy it to the clipboard.");
+        for (String arg: args) {
+            if (arg.contains("h")) {
+                System.out.println("Usage: uuid        Print out a new UUID and copy it to the clipboard.\n");
+                System.out.println("       uuid -c     Print out a new UUID. (c for clean)");
                 System.out.println("       uuid c\n");
                 System.out.println("       uuid --help  Print out this text and exit.");
                 System.out.println("       uuid --h");
@@ -45,7 +48,7 @@ public final class UuidGen {
             String[] variations = { "c", "-c", "--c" };
             for (String v: variations) {
                 if (v.equalsIgnoreCase(args[0])) {
-                    uuidGen.useClipboard = true;
+                    uuidGen.useClipboard = false;
                     break;
                 }
             }
@@ -53,5 +56,5 @@ public final class UuidGen {
         return uuidGen;
     }
 
-    private boolean useClipboard = false;
+    private boolean useClipboard = true;
 }

@@ -5,6 +5,13 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
+
 public final class JsonTools {
     private JsonTools() { }
 
@@ -34,7 +41,7 @@ public final class JsonTools {
     /**
      * Most values arrive as property expressions as P=S, where only S is the JSON String. So we split the value at
      * the = character, and just prettify what follows it. But we put the whole thing in the pane. If there is no
-     * equal sign, we try to prettify the while String.
+     * equal sign, we try to prettify the whole String.
      * @param jsonString The property expression to prettify.
      * @return A property expression with a prettified value. If the expression is not a property expression, the
      * prettified String. If it's not a JSON String, we just return it.
@@ -49,5 +56,23 @@ public final class JsonTools {
             return head+toPrettyFormat(tail);
         }
         return toPrettyFormat(jsonString);
+    }
+
+    public static void main(String[] args) throws IOException, UnsupportedFlavorException {
+        Clipboard clipboard = null;
+        String input;
+        if (args.length > 0) {
+            input = args[1];
+        } else {
+            clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            input = clipboard.getData(DataFlavor.stringFlavor).toString();
+        }
+        String output = toPrettyFormat(input);
+        if (clipboard == null) {
+            System.out.println(output);
+        } else {
+            StringSelection stringSelection = new StringSelection(output);
+            clipboard.setContents(stringSelection, stringSelection);
+        }
     }
 }
