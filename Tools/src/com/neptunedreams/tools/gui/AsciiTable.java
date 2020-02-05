@@ -125,6 +125,7 @@ public class AsciiTable extends JPanel {
         add(labelList.get(i+c));
       }
     }
+    setBorder(new MatteBorder(1, 0, 1, 1, Color.BLACK));
   }
   
   private JComponent makeCharView(Code code, int value) {
