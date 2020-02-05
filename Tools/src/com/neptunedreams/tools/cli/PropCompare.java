@@ -58,10 +58,10 @@ public class PropCompare {
     Map<String, String> rightMap = copyToMap(right);
     Set<String> propsMissingFromLeft = getMissing(leftMap, rightMap);
     Set<String> propsMissingFromRight = getMissing(rightMap, leftMap);
-    System.out.printf("Properties missing from left: %d %n", propsMissingFromLeft.size());
+    System.out.printf("Properties missing from left: %d/%d %n", propsMissingFromLeft.size(), rightMap.size());
     showProperties(propsMissingFromLeft, rightMap);
 
-    System.out.printf("%nProperties missing from right: %d %n", propsMissingFromRight.size());
+    System.out.printf("%nProperties missing from right: %d/%d %n", propsMissingFromRight.size(), leftMap.size());
     showProperties(propsMissingFromRight, leftMap);
     
     Set<String> commonKeys = getCommonKeys(leftMap, rightMap);
