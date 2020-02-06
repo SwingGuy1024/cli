@@ -73,11 +73,11 @@ public class PropCompare {
       String rightValue = right.getProperty(key);
       char leftTrailChar = trailingSpaceMark(leftValue);
       char rightTrailChar = trailingSpaceMark(rightValue);
-      if (!trailingSpace && (leftTrailChar == STAR || rightTrailChar == STAR)) {
-        trailingSpace = true;
-      }
-      
+
       if (!leftValue.equals(rightValue)) {
+        if (!trailingSpace && (leftTrailChar == STAR || rightTrailChar == STAR)) {
+          trailingSpace = true;
+        }
         System.out.printf("<%c %s=%s%n", leftTrailChar, key, leftValue);
         System.out.printf(">%c %s=%s%n%n", rightTrailChar, key, rightValue);
         count++;
