@@ -10,6 +10,7 @@ import java.io.StringReader;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Compares contents of two properties files, or of one properties file with those on the clipboard.
@@ -93,16 +94,25 @@ public class PropCompare {
     return s.equals(s.trim())? ' ' : STAR;
   }
 
-  private static Set<String> getCommonKeys(Properties leftMap, Properties rightMap) {
-    Set<String> commonKeys = new TreeSet<>();
-    for (String key: leftMap.stringPropertyNames()) {
-      if (rightMap.containsKey(key)) {
-        commonKeys.add(key);
+  private static Set<String> getCommonKeys2(Properties leftMap, Properties rightMap) {
+    Set<String> commonNames = new TreeSet<>();
+    for (String name : leftMap.stringPropertyNames()) {
+      if (rightMap.containsKey(name)) {
+        commonNames.add(name);
       }
     }
-    return commonKeys;
+    return commonNames;
   }
-  
+
+  private static Set<String> getCommonKeys(Properties leftMap, Properties rightMap) {    
+    //noinspection UnnecessaryLocalVariable
+    TreeSet<String> commonNames = leftMap.stringPropertyNames()
+        .stream()
+        .filter(rightMap::containsKey)
+        .collect(Collectors.toCollection(TreeSet::new));
+    return commonNames;
+  }
+
   private static void showProperties(Set<String> missing, Properties map) {
     for (String key: missing) {
       System.out.printf("%s=%s%n", key, map.getProperty(key));
