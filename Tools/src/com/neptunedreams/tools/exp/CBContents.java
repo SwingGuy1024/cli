@@ -17,16 +17,25 @@ import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.parser.ParserDelegator;
 
-public class CBContents {
+@SuppressWarnings({"UseOfSystemOutOrSystemErr", "HardCodedStringLiteral", "HardcodedLineSeparator"})
+public enum CBContents {
+    ;
+
+    private static final char NEW_LINE = '\n';
+    private static final String CHARSET = "charset";
+
     public static void main(String[] args) {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         
+        // I attempted to use a LinkedHashSet to avoid duplicate DataFlavors, but there are no duplicates. There are
+        // various groups of three with the same toString() value, so they look like duplicates, but they're not equal
+        // because the three flavors' document parameter has 3 different values: selection, fragment, and all.
         DataFlavor[] flavors = clipboard.getAvailableDataFlavors();
         System.out.printf("Flavor Count: %d%n", flavors.length);
         for (DataFlavor flavor: flavors) {
             Class<?> representationClass = flavor.getRepresentationClass();
             String array = "";
-            String charset = flavor.getParameter("charset");
+            String charset = flavor.getParameter(CHARSET);
             if (representationClass.isArray()) {
                 array = "[Array]";
                 representationClass = representationClass.getComponentType();
@@ -35,12 +44,14 @@ public class CBContents {
         }
         System.out.println("\n---\n\n");
         for (DataFlavor flavor: flavors) {
-            System.out.printf("Flavor: %s%n", flavor);
-            String text;
+            System.out.printf("___%nFlavor: %s%n", flavor);
             String charset = getCharset(flavor);
             if (charset == null) { charset = "US-ASCII"; }
+            System.out.printf("Charset: %s (%s)%n", charset, flavor.getParameter(CHARSET));
+            //noinspection OverlyBroadCatchBlock
             try {
                 Object data = clipboard.getData(flavor);
+                String text;
                 if (data instanceof Reader) {
                     text = readFromReader((Reader) data);
                 } else if (data instanceof String) {
@@ -53,6 +64,8 @@ public class CBContents {
                 } else if (data instanceof ByteBuffer) {
                     ByteBuffer buffer = (ByteBuffer) data;
                     text = new String(buffer.array(), charset);
+                } else if (data == null) {
+                    text = "<no data>";
                 } else if (data.getClass().isArray()) {
                     Class<?> componentType = data.getClass().getComponentType();
                     if (componentType == Character.TYPE) {
@@ -89,13 +102,14 @@ public class CBContents {
 
             @Override
             public void handleEndOfLineString(String eol) {
-                rawText.append('\n');
+                rawText.append(NEW_LINE);
             }
 
             @Override
             public void handleStartTag(HTML.Tag t, MutableAttributeSet a, int pos) {
+                //noinspection ObjectEquality
                 if (t == HTML.Tag.P) {
-                    rawText.append('\n');
+                    rawText.append(NEW_LINE);
                 }
             }
         };
@@ -106,26 +120,30 @@ public class CBContents {
 
     private static String readFromReader(Reader data) throws IOException {
         StringBuilder builder = new StringBuilder();
-        BufferedReader reader = new BufferedReader(data);
-        String text = "";
-        while (text != null) {
-            builder.append(text);
-            text = reader.readLine();
+        try (BufferedReader reader = new BufferedReader(data)) {
+            String text = "";
+            while (text != null) {
+                builder.append(text);
+                text = reader.readLine();
+            }
         }
-        reader.close();
         return builder.toString();
     }
     
     private static String getCharset(DataFlavor flavor) {
-        String charSet = flavor.getParameter("charset");
+        String charSet = flavor.getParameter(CHARSET);
         if (charSet == null) {
             String src = flavor.toString();
-            int csSpot = src.indexOf("charset");
+            int csSpot = src.indexOf(CHARSET);
             if (csSpot >= 0) {
+                //noinspection MagicCharacter
                 int equalIndex = src.indexOf('=', csSpot) + 1;
+                //noinspection MagicCharacter
                 int end = src.indexOf(']', csSpot);
                 charSet = src.substring(equalIndex, end);
                 System.out.printf("Revised charset: %s%n", charSet);
+            } else {
+                charSet = System.getProperty("file.encoding");
             }
         }
         return charSet;
