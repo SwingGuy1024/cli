@@ -108,7 +108,7 @@ public enum CBContents {
             @Override
             public void handleStartTag(HTML.Tag t, MutableAttributeSet a, int pos) {
                 //noinspection ObjectEquality
-                if (t == HTML.Tag.P) {
+                if (t == HTML.Tag.P || t == HTML.Tag.BR) {
                     rawText.append(NEW_LINE);
                 }
             }
