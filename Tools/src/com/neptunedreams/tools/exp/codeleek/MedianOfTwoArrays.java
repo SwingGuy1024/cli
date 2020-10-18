@@ -12,6 +12,9 @@ import java.util.stream.IntStream;
 
 /**
  * Code challenge presented at https://leetcode.com/problems/median-of-two-sorted-arrays/submissions/
+ * 
+ * Solution adapted from https://www.drdobbs.com/parallel/finding-the-median-of-two-sorted-arrays/240169222?pgno=2
+ * 
  * <p>Created by IntelliJ IDEA.
  * <p>Date: 10/14/20
  * <p>Time: 10:14 AM
@@ -61,7 +64,7 @@ public class MedianOfTwoArrays {
     for (TestCase testCase: caseList) {
       double value = solve(testCase.small, testCase.large);
       if (value != testCase.median) {
-        throw new AssertionError();
+        throw new AssertionError(String.format("%3.1f != %3.1f from %s and %s", testCase.median, value, asString(testCase.small), asString(testCase.large)));
       }
     }
 
@@ -80,19 +83,20 @@ public class MedianOfTwoArrays {
       randomTestCases.add(new RandomTestCase(seed, getDupStreamSupplier(), 4, 8));
     }
     
+    int rCount = 0;
     for (int smallSize = 1; smallSize<15; ++smallSize) {
       for (int largeSize = smallSize; largeSize < 15; ++largeSize) {
-       for (int i=0; i<1000; ++i) {
-         randomTestCases.add(new RandomTestCase(seed, smallSize, largeSize));
+       for (int i=0; i<1000000; ++i) {
+         rCount++;
+         final RandomTestCase randomTestCase = new RandomTestCase(seed, smallSize, largeSize);
+         double value = solve(randomTestCase.small, randomTestCase.large);
+         if (value != randomTestCase.median) {
+           throw new AssertionError(String.format("Mismatch id=%d: %3.1f != %3.1f", randomTestCase.id, randomTestCase.median, value));  // NON-NLS
+         }
        }
       }
     }
-    for (RandomTestCase randomTestCase: randomTestCases) {
-      double value = solve(randomTestCase.small, randomTestCase.large);
-      if (value != randomTestCase.median) {
-        throw new AssertionError(String.format("Mismatch id=%d: %3.1f != %3.1f", randomTestCase.id, randomTestCase.median, value));  // NON-NLS
-      }
-    }
+    System.out.printf("Total of %d cases", randomTestCases.size() + rCount); // NON-NLS
   }
   
   private static class TestCase {
@@ -118,7 +122,8 @@ public class MedianOfTwoArrays {
       for (int index=startingIndexInSmallArray; index<largeSize; ++index) {
         large[index] = base + breakValue++;
       }
-      median = base + ((smallSize + largeSize) / 2.0);
+      //noinspection IntegerDivisionInFloatingPointContext
+      median = base + ((smallSize + largeSize) / 2);
     }
   }
   
