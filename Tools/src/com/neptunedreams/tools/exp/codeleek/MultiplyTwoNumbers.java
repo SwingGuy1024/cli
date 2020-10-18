@@ -1,6 +1,6 @@
 package com.neptunedreams.tools.exp.codeleek;
 
-import java.util.Arrays;
+import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +11,7 @@ import java.util.List;
  *
  * @author Miguel Mu\u00f1oz
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class MultiplyTwoNumbers {
   static final String DIGITS = "0123456789";
 
@@ -23,6 +24,7 @@ public class MultiplyTwoNumbers {
     String m5 = "66";
     String m6 = "384";
     String m7 = "27";
+    multiply(multiplyTwoNumbers, "0", "0");
     multiply(multiplyTwoNumbers, m6, m7);
     multiply(multiplyTwoNumbers, m1, m2);
     multiply(multiplyTwoNumbers, m3, m4);
@@ -39,7 +41,14 @@ public class MultiplyTwoNumbers {
     System.out.println(m2);
     System.out.println(r1);
     System.out.println(multiplyTwoNumbers.multiply(m1, m2));
-    System.out.println("");
+    
+    BigInteger b1 = new BigInteger(m1);
+    BigInteger verify = b1.multiply(new BigInteger(m2));
+    System.out.printf("%s Verify%n", verify); // NON-NLS
+    if (!verify.toString().equals(r1)) {
+      throw new AssertionError("Mismatch: verify != r1");
+    }
+    System.out.println();
   }
 
   public String multiply(String num1, String num2) {
@@ -48,32 +57,35 @@ public class MultiplyTwoNumbers {
     int[] d2 = getDigits(num2);
 
     List<int[]> partialSums = new LinkedList<>();
-    for (int i = 0; i < d1.length; ++i) {
-      partialSums.add(scale(d2, d1[i], i));
+    for (final int j : d1) {
+      partialSums.add(scale(d2, j));
     }
 
     int[] result = new int[num1.length() + num2.length()];
-    Arrays.fill(result, 0);
+//    Arrays.fill(result, 0);
+    int tenShift = 0;
     for (int[] partial : partialSums) {
       for (int i = 0; i < partial.length; i++) {
-        addToResult(partial[i], result, i);
+        addToResult(partial[i], result, i+tenShift);
       }
+      tenShift++;
     }
     StringBuilder builder = new StringBuilder();
     for (int i = result.length - 1; i >= 0; --i) {
       builder.append(result[i]);
     }
-    while (builder.charAt(0) == '0') {
+    //noinspection MagicCharacter
+    while ((builder.charAt(0) == '0') && (builder.length() > 1)) {
       builder.deleteCharAt(0);
     }
     return builder.toString();
   }
 
-  private static int[] scale(int[] number, int multiple, int tenShift) {
-    int[] result = new int[number.length + 1 + tenShift];
-    Arrays.fill(result, 0); // not sure if necessary!
+  private static int[] scale(int[] number, int multiple) {
+    int[] result = new int[number.length + 1];
+//    Arrays.fill(result, 0); // not sure if necessary!
     for (int i = 0; i < number.length; ++i) {
-      addToResult(number[i] * multiple, result, i + tenShift);
+      addToResult(number[i] * multiple, result, i);
     }
     return result;
   }
