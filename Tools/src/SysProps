@@ -1,11 +1,11 @@
-package com.neptunedreams.tools.cli;
+#!/usr/bin/java --source 11
 
 import java.io.File;
 import java.util.*;
 
 /**
  * Add this to your ~/.bash_profile
- * alias sysprops="java -cp ~/Tools/out/production/Tools com.neptunedreams.tools.cli.SysProps"
+ * alias sysprops="java -cp ~/Tools/out/production/Tools SysProps"
  */
 public final class SysProps {
 

@@ -1,4 +1,4 @@
-package com.neptunedreams.tools.cli;
+#!/usr/bin/java --source 11
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -51,8 +51,8 @@ public class PropCompare {
   }
 
   private static void showUsageAndExit() {
-    System.err.println("Usage: java com.neptunedreams.tools.cli.PropCompare <fileName>");
-    System.err.println("       java com.neptunedreams.tools.cli.PropCompare <leftName> <rightName>");
+    System.err.println("Usage: java PropCompare <fileName>");
+    System.err.println("       java PropCompare <leftName> <rightName>");
     System.exit(0);
   }
   

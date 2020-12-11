@@ -1,4 +1,4 @@
-package com.neptunedreams.tools.cli;
+#!/usr/bin/java --source 11
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;

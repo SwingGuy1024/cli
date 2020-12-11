@@ -1,4 +1,4 @@
-package com.neptunedreams.tools.cli;
+#!/usr/bin/java --source 11
 
 import com.neptunedreams.tools.UrlConvert;
 
@@ -13,7 +13,7 @@ import java.io.IOException;
  * Convert HTTP form data, captured using Chrome:inspect, from raw source, into text suitable for use in Postman,
  * when pasted into
  * Add this to your ~/.bash_profile
- * alias topost="java -cp ~/Tools/out/production/Tools com.neptunedreams.tools.cli.ToPost"
+ * alias topost="java -cp ~/Tools/out/production/Tools ToPost"
  */
 public final class ToPost {
     private ToPost() { }
