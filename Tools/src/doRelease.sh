@@ -1,4 +1,4 @@
-TrimTwo HeaderPaste.java ../../../HeaderPaste
+TrimTwo HeaderPaste.java ../../../hp
 TrimTwo PropCompare.java ../../../PropCompare
 TrimTwo SysProps.java ../../../SysProps
 TrimTwo TimeConvert.java ../../../millis

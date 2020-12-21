@@ -1,4 +1,4 @@
-#!/usr/bin/java --source 11
+//#!/usr/bin/java --source 11
 
 /*
  * <p>Created by IntelliJ IDEA.
@@ -15,11 +15,6 @@ import java.util.UUID;
 
 /**
  * Generates a random UUID, prints it out, and copies it to the clipboard.
- * Add this to your ~/.bash_profile
- * alias uuid="java -cp ~/Tools/out/production/Tools UuidGen"
- * or
- * alias uuid='java -cp ~/Tools/out/production/Tools UuidGen -c'
- * alias uuidnc='java -cp ~/Tools/out/production/Tools UuidGen'
  */
 @SuppressWarnings({"UseOfSystemOutOrSystemErr", "HardCodedStringLiteral", "HardcodedLineSeparator"})
 public final class UuidGen {
