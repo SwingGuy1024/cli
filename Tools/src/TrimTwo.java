@@ -33,11 +33,7 @@ public enum TrimTwo {
       if (oneLine == null) {
         throw new IOException("Empty file");
       }
-      if (oneLine.startsWith("//#")) {
-        oneLine = oneLine.substring(2);
-      } else if (oneLine.startsWith("// #")) {
-        oneLine = oneLine.substring(3);
-      }
+      oneLine = stripLeadComment(oneLine);
       while (oneLine != null) {
         writer.append(oneLine).append(NEW_LINE);
         oneLine = reader.readLine();
@@ -45,6 +41,18 @@ public enum TrimTwo {
     }
     //noinspection ResultOfMethodCallIgnored
     new File(args[1]).setExecutable(true);
+  }
+  
+  // shebang starts with comment
+  private static String stripLeadComment(final String s) {
+    String st = s.trim();
+    if (st.startsWith("//")) {
+      st = st.substring(2).trim();
+      if (st.startsWith("#")) {
+        return st;
+      }
+    }
+    return s;
   }
 
   private static void showUsageAndExit() {
