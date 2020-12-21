@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 /**
  * Compares contents of two properties files, or of one properties file with those on the clipboard.
  */
-@SuppressWarnings({"UseOfSystemOutOrSystemErr", "HardCodedStringLiteral"})
 public enum PropCompare {
   ;
 
@@ -47,7 +46,6 @@ public enum PropCompare {
     return cbProps;
   }
 
-  @SuppressWarnings("OverlyBroadThrowsClause")
   private static Properties getPropertiesFromFile(String fileName) throws IOException {
     Properties props = new Properties();
     props.load(new FileReader(fileName));

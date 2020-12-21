@@ -17,14 +17,11 @@ import java.io.IOException;
  *
  * @author Miguel Mu\u00f1oz
  */
-@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public enum TrimTwo {
   ;
 
-  @SuppressWarnings("HardcodedLineSeparator")
   private static final char NEW_LINE = '\n';
 
-  @SuppressWarnings("OverlyBroadThrowsClause")
   public static void main(String[] args) throws IOException {
     if (args.length != 2) {
       showUsageAndExit();

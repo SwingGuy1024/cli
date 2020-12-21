@@ -1,7 +1,8 @@
 package com.neptunedreams.tools;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.charset.Charset;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -14,34 +15,34 @@ import java.util.StringTokenizer;
  * @author Miguel Mu\u00f1oz
  */
 @SuppressWarnings({"MagicCharacter", "MagicNumber", "HardcodedLineSeparator"})
-public final class UrlConvert {
-    private static Charset utf_8 = Charset.forName("UTF-8");
-
-    private UrlConvert() {
-    }
-
+public enum UrlConvert {
+    ;
     public static String decodeAscii(final String input) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        int tail = 2;
-        int ii = 0;
-        while (ii < (input.length() - tail)) {
-            char c = input.charAt(ii);
-            if ((c == '%') && isCode(input, ii + 1)) {
-                outputStream.write(getCode(input.substring(ii + 1, ii + 3)));
-                ii += 3;
-            } else if (c > 0xFF) {
-                int ic = (int) c;
-                throw new IllegalArgumentException(String.format("Character %c (%d = 0x%02X) too high", c, ic, ic));
-            } else {
-                outputStream.write(c);
-                ii++;
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            int tail = 2;
+            int ii = 0;
+            while (ii < (input.length() - tail)) {
+                char c = input.charAt(ii);
+                if ((c == '%') && isCode(input, ii + 1)) {
+                    outputStream.write(getCode(input.substring(ii + 1, ii + 3)));
+                    ii += 3;
+                } else if (c > 0xFF) {
+                    int ic = (int) c;
+                    throw new IllegalArgumentException(String.format("Character %c (%d = 0x%02X) too high", c, ic, ic));
+                } else {
+                    outputStream.write(c);
+                    ii++;
+                }
             }
+            while (ii < input.length()) {
+                outputStream.write(input.charAt(ii));
+                ++ii;
+            }
+            return toUtf8(outputStream.toByteArray());
+        } catch (IOException e) {
+            //noinspection ProhibitedExceptionThrown
+            throw new RuntimeException(e); // made necessary by the try() {} statement. This shouldn't happen
         }
-        while (ii < input.length()) {
-            outputStream.write(input.charAt(ii));
-            ++ii;
-        }
-        return toUtf8(outputStream.toByteArray());
     }
 
     public static String encodeAscii(String input) {
@@ -190,11 +191,11 @@ public final class UrlConvert {
 //    }
 
     private static String toUtf8(byte[] data) {
-        return new String(data, utf_8);
+        return new String(data, StandardCharsets.UTF_8);
     }
 
     private static byte[] toByteData(String s) {
-        return s.getBytes(utf_8);
+        return s.getBytes(StandardCharsets.UTF_8);
     }
 
     private static final Set<Character> charsToSkip = makeNonSkipChars();

@@ -16,7 +16,6 @@ import java.util.UUID;
 /**
  * Generates a random UUID, prints it out, and copies it to the clipboard.
  */
-@SuppressWarnings({"UseOfSystemOutOrSystemErr", "HardCodedStringLiteral", "HardcodedLineSeparator"})
 public final class UuidGen {
   private UuidGen() { }
 
