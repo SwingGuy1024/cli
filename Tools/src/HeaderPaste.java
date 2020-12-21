@@ -1,4 +1,4 @@
-#!/usr/bin/java --source 11
+//#!/usr/bin/java --source 11
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;

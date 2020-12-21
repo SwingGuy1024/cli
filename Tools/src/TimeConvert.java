@@ -10,8 +10,9 @@ import java.time.ZonedDateTime;
  *
  * Rules for Shebang Java: Add a Shebang line at the top. It must start with #!, have a complete path to the java executable, and 
  * must specify a source. Then, the extension must be removed from the file, and it must be made executable.
+ * The java file may call system libraries, but must not call any other user classes. All the code must sit in a single file.
  *
- * Then type this: TimeConvert 1550785775435
+ * To use, type this: TimeConvert 1550785775435
  */
 public final class TimeConvert {
     private TimeConvert() { }
@@ -20,7 +21,6 @@ public final class TimeConvert {
         if (args.length == 1 && args[0].startsWith("-h")) {
             System.out.println("Converts milliseconds to time");
             System.out.println("Usage: millis <milliseconds> [<milliseconds> ...]");
-//            System.out.printf("  at %s%n  %d ms%n  %d seconds%n", getTime(millis), millis, millis/1000);
 
             return;
         }

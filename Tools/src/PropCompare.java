@@ -1,4 +1,4 @@
-#!/usr/bin/java --source 11
+//#!/usr/bin/java --source 11
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -15,9 +15,12 @@ import java.util.stream.Collectors;
 /**
  * Compares contents of two properties files, or of one properties file with those on the clipboard.
  */
-public class PropCompare {
+@SuppressWarnings({"UseOfSystemOutOrSystemErr", "HardCodedStringLiteral"})
+public enum PropCompare {
+  ;
 
-  public static final char STAR = '*';
+  private static final char STAR = '*';
+  private static final char SPACE = ' ';
 
   public static void main(String[] args) throws IOException, UnsupportedFlavorException {
     switch (args.length) {
@@ -44,6 +47,7 @@ public class PropCompare {
     return cbProps;
   }
 
+  @SuppressWarnings("OverlyBroadThrowsClause")
   private static Properties getPropertiesFromFile(String fileName) throws IOException {
     Properties props = new Properties();
     props.load(new FileReader(fileName));
@@ -55,7 +59,7 @@ public class PropCompare {
     System.err.println("       java PropCompare <leftName> <rightName>");
     System.exit(0);
   }
-  
+
   private static void compare(Properties left, Properties right) {
     Set<String> propsMissingFromLeft = getMissing(left, right);
     Set<String> propsMissingFromRight = getMissing(right, left);
@@ -64,7 +68,7 @@ public class PropCompare {
 
     System.out.printf("%nProperties missing from right: %d/%d %n", propsMissingFromRight.size(), left.size());
     showProperties(propsMissingFromRight, left);
-    
+
     Set<String> commonKeys = getCommonKeys(left, right);
     System.out.printf("%nMismatches:%n");
     int count = 0;
@@ -76,7 +80,7 @@ public class PropCompare {
       char rightTrailChar = trailingSpaceMark(rightValue);
 
       if (!leftValue.equals(rightValue)) {
-        if (!trailingSpace && (leftTrailChar == STAR || rightTrailChar == STAR)) {
+        if (!trailingSpace && ((leftTrailChar == STAR) || (rightTrailChar == STAR))) {
           trailingSpace = true;
         }
         System.out.printf("<%c %s=%s%n", leftTrailChar, key, leftValue);
@@ -89,9 +93,9 @@ public class PropCompare {
       System.out.printf("%c Has one or more trailing spaces%n", STAR);
     }
   }
-  
+
   private static char trailingSpaceMark(String s) {
-    return s.equals(s.trim())? ' ' : STAR;
+    return s.equals(s.trim())? SPACE : STAR;
   }
 
   private static Set<String> getCommonKeys2(Properties leftMap, Properties rightMap) {
@@ -118,7 +122,7 @@ public class PropCompare {
       System.out.printf("%s=%s%n", key, map.getProperty(key));
     }
   }
-  
+
   private static Set<String> getMissing(Properties from, Properties source) {
     Set<String> missingKeySet = new TreeSet<>();
     for (String key: source.stringPropertyNames()) {

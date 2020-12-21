@@ -14,6 +14,7 @@ import java.awt.datatransfer.StringSelection;
 import java.util.UUID;
 
 /**
+ * Generates a random UUID, prints it out, and copies it to the clipboard.
  * Add this to your ~/.bash_profile
  * alias uuid="java -cp ~/Tools/out/production/Tools UuidGen"
  * or
