@@ -1,4 +1,5 @@
 //#!/usr/bin/java --source 11
+package com.neptunedreams.tools.cli;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,7 +25,11 @@ public enum TrimTwo {
 
   public static void main(String[] args) throws IOException {
     if (args.length != 2) {
-      showUsageAndExit();
+      if ((args.length == 1) && "install".equals(args[0])) {
+        doInstallAndExit();
+      } else {
+        showUsageAndExit();
+      }
     }
     try (BufferedReader reader = new BufferedReader(new FileReader(args[0]));
          BufferedWriter writer = new BufferedWriter(new FileWriter(args[1]))
@@ -42,7 +47,20 @@ public enum TrimTwo {
     //noinspection ResultOfMethodCallIgnored
     new File(args[1]).setExecutable(true);
   }
-  
+
+  private static void doInstallAndExit() throws IOException {
+    final String userDir = System.getProperty("user.dir");
+    final String sourcePath = "/cli/Tools/src/com/neptunedreams/tools/cli/";
+    final String src = userDir + sourcePath + "TrimTwo.java";
+
+    final String userHome = System.getProperty("user.home");
+    final String dst = userHome + "/bin/TrimTwo";
+
+    main(new String[] {src, dst});
+    System.out.println("TrimTwo installation Complete");
+    System.exit(0); // Clean exit
+  }
+
   // shebang starts with comment
   private static String stripLeadComment(final String s) {
     String st = s.trim();
