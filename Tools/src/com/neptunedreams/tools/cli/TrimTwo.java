@@ -1,4 +1,3 @@
-//#!/usr/bin/java --source 11
 package com.neptunedreams.tools.cli;
 
 import java.io.BufferedReader;
@@ -22,6 +21,8 @@ public enum TrimTwo {
   ;
 
   private static final char NEW_LINE = '\n';
+  private static final String USE_PREFIX = "// use: ";
+  private static final String SHEBANG_LINE = "#!/usr/bin/java --source 11\n";
 
   public static void main(String[] args) throws IOException {
     if (args.length != 2) {
@@ -31,21 +32,45 @@ public enum TrimTwo {
         showUsageAndExit();
       }
     }
-    try (BufferedReader reader = new BufferedReader(new FileReader(args[0]));
-         BufferedWriter writer = new BufferedWriter(new FileWriter(args[1]))
-    ) {
+    processFile(args[0], args[1]);
+  }
+
+  private static void processFile(String filePath, String outPathDirectory) throws IOException {
+    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
       String oneLine = reader.readLine();
-      if (oneLine == null) {
-        throw new IOException("Empty file");
+      String outFileName;
+      if (oneLine.toLowerCase().startsWith(USE_PREFIX)) {
+        outFileName = oneLine.substring(USE_PREFIX.length()).trim();
+      } else {
+        int dSpot = Math.max(0, filePath.lastIndexOf('/'));
+        String simpleName = filePath.substring(dSpot);
+        outFileName = simpleName.replaceAll("\\.java", "");
       }
-      oneLine = stripLeadComment(oneLine);
-      while (oneLine != null) {
-        writer.append(oneLine).append(NEW_LINE);
-        oneLine = reader.readLine();
+      String fullOutPath = makeOutPath(outPathDirectory, outFileName);
+      writeToFile(oneLine, reader, fullOutPath);
+    }
+  }
+
+  private static String makeOutPath(final String outPathDirectory, final String outFileName) {
+    if (outPathDirectory.endsWith("/")) {
+      return String.format("%s%s", outPathDirectory, outFileName);
+    }
+    return String.format("%s/%s", outPathDirectory, outFileName);
+  }
+
+  private static void writeToFile(final String oneLine, final BufferedReader reader, String outPath) throws IOException {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(outPath))) {
+      writer.write(SHEBANG_LINE);
+      String line = oneLine;
+      while (line != null) {
+        writer
+            .append(line)
+            .append(NEW_LINE);
+        line = reader.readLine();
       }
     }
     //noinspection ResultOfMethodCallIgnored
-    new File(args[1]).setExecutable(true);
+    new File(outPath).setExecutable(true);
   }
 
   private static void doInstallAndExit() throws IOException {
@@ -54,7 +79,7 @@ public enum TrimTwo {
     final String src = userDir + sourcePath + "TrimTwo.java";
 
     final String userHome = System.getProperty("user.home");
-    final String dst = userHome + "/bin/TrimTwo";
+    final String dst = userHome + "/bin";
 
     main(new String[] {src, dst});
     System.out.println("TrimTwo installation Complete");
@@ -74,7 +99,7 @@ public enum TrimTwo {
   }
 
   private static void showUsageAndExit() {
-    System.err.printf("Usage TrimTwo <source> <dest>%n"); // NON-NLS
+    System.err.printf("Usage TrimTwo <source> <destinationDirectory>%n"); // NON-NLS
     System.exit(0);
   }
 }

@@ -1,4 +1,4 @@
-//#!/usr/bin/java --source 11
+// use: hp
 package com.neptunedreams.tools.cli;
 
 import java.awt.Toolkit;

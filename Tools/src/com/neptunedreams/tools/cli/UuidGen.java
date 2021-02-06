@@ -1,4 +1,4 @@
-//#!/usr/bin/java --source 11
+// use: uuid
 package com.neptunedreams.tools.cli;
 
 /*

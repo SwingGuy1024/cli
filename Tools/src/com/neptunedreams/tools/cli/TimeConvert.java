@@ -1,4 +1,4 @@
-//#!/usr/bin/java --source 11
+// Use: millis
 package com.neptunedreams.tools.cli;
 
 import java.time.Instant;

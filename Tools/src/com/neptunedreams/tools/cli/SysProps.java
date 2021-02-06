@@ -1,4 +1,3 @@
-//#!/usr/bin/java --source 11
 package com.neptunedreams.tools.cli;
 
 import java.io.File;
