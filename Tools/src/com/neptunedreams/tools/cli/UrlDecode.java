@@ -17,6 +17,11 @@ public enum UrlDecode {
       System.exit(1);
     }
     String input = args[0];
+    String decoded = decode(input);
+    System.out.println(decoded);
+  }
+
+  private static String decode(final String input) {
     StringBuilder builder = new StringBuilder();
     String source = input.substring(0, input.length()-2);
     int pSpot = source.indexOf('%');
@@ -27,13 +32,15 @@ public enum UrlDecode {
       try {
         c = (char) Short.parseShort(input.substring(pSpot+1, pSpot+3), 16);
       } catch (NumberFormatException e) {
-        System.err.printf("%s at %d: %s%n", e.getMessage(), pSpot, input.substring(pSpot, pSpot+3)); // NON-NLS;
+        final String badValue = input.substring(pSpot, pSpot + 3);
+        System.err.printf("%s at %d: %s%n", e.getMessage(), pSpot, badValue); // NON-NLS;
+        throw new IllegalArgumentException(badValue, e);
       }
       builder.append(c);
       prior = pSpot+3;
       pSpot = source.indexOf('%', prior);
     }
     builder.append(input.substring(prior));
-    System.out.println(builder);
+    return builder.toString();
   }
 }
