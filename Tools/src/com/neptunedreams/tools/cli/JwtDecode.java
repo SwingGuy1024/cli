@@ -22,6 +22,7 @@ public enum JwtDecode {
       System.err.printf("Invalid token%n"); // NON-NLS
       return;
     }
+    System.out.println(decode(tokens[0]));
     System.out.println(decode(tokens[1]));
   }
   
