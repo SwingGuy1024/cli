@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 /**
  * <p>Finds the specified executable file on the path, and prints all directories containing the executable file. This does what the
- * standard unix {@code whereis} command is supposed to do, but doesn't, at least on my system. The {@code whereis} command sometimes
+ * standard unix {@code whereis} command is supposed to do, but doesn't. The {@code whereis} command sometimes
  * fails because it only looks in the standard binary directories for the specified programs, whereas this tool looks in every
  * directory on the path.</p>
  * <p>Created by IntelliJ IDEA.
@@ -32,14 +32,31 @@ public enum Where {
     String fileSeparator = System.getProperty("file.separator");
     String target = args[0];
     String[] pathElements = path.split(separator);
+    
+    // Make sure the path elements are all valid, then continue.
+    Arrays.stream(pathElements)
+        .map(String::trim)
+        .map(Where::coverTilde)
+        .map(File::new)
+        .filter(dir-> !dir.isDirectory())
+        .forEach(d-> System.out.printf("Warning: Path element %s is not a directory%n", d));
+    
     // Warns me about a possible null value from dir.list(), but this can't happen because I test it for a directory.
     // (It can't be a directory if the path is correct, but it's possible to put a non-existent path or even a file onto
     // the path by accident.)
     //noinspection ConstantConditions
     Arrays.stream(pathElements)
-        .map(String::trim)
+        .map(String::trim) // last entry mysteriously gets a \n appended without this.
+        .map(Where::coverTilde)
         .map(File::new)
         .filter(dir-> dir.isDirectory() && Arrays.asList(dir.list()).contains(target))
         .forEach(d->System.out.printf("%s%s%s%n", d, fileSeparator, target));
+  }
+
+  private static String coverTilde(String dirName) {
+    if (dirName.startsWith("~")) {
+      return String.format("%s%s", System.getProperty("user.home"), dirName.substring(1));
+    }
+    return dirName;
   }
 }
