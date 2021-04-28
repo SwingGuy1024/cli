@@ -4,6 +4,8 @@ package com.neptunedreams.tools.cli;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 /**
@@ -21,6 +23,8 @@ import java.util.Arrays;
 public enum Where {
   ;
 
+  private static final String FILE_SEPARATOR = System.getProperty("file.separator");
+
   public static void main(String[] args) throws IOException {
     if (args.length != 1) {
       System.out.printf("Usage: where <dir>%n"); // NON-NLS
@@ -29,7 +33,6 @@ public enum Where {
     Process pathProcess = Runtime.getRuntime().exec("path");
     String path = new String(pathProcess.getInputStream().readAllBytes(), Charset.defaultCharset());
     String separator = System.getProperty("path.separator");
-    String fileSeparator = System.getProperty("file.separator");
     String target = args[0];
     String[] pathElements = path.split(separator);
     
@@ -50,7 +53,23 @@ public enum Where {
         .map(Where::coverTilde)
         .map(File::new)
         .filter(dir-> dir.isDirectory() && Arrays.asList(dir.list()).contains(target))
-        .forEach(d->System.out.printf("%s%s%s%n", d, fileSeparator, target));
+        .forEach(d->printPath(d, target));
+  }
+  
+  private static void printPath(File dirPath, String target) {
+    String fullPath = String.format("%s%s%s", dirPath, FILE_SEPARATOR, target);
+    System.out.printf("%s%s%n", fullPath, isLinkOrExecutable(fullPath)); // NON-NLS
+  }
+  
+  private static String isLinkOrExecutable(String filePath) {
+    Path path= Path.of(filePath);
+    if (Files.isSymbolicLink(path)) {
+      return "@";
+    }
+    if (Files.isExecutable(path)) {
+      return "*";
+    }
+    return "";
   }
 
   private static String coverTilde(String dirName) {
