@@ -8,9 +8,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * This works like the Unix cp command, except it also trims the first line if it detects that it's a Shebang line that has been 
- * commented out. It also sets the resulting file to executable. This essentially lets me release a Shebang-enabled java file. I
- * comment out the Shebang file because IntelliJ doesn't recognize it.
+ * <p>This works like the Unix cp command, except it also adds a Shebang line.</p>
+ * <p>It also optionally changes the name of the file to xxx if the first line is a comment of this form:</p>
+ * <pre>// use: xxx</pre>
+ * <p>It also sets the resulting file to executable. This essentially lets me release a Shebang-enabled java file.</p>
+ * <p>It's called "TrimTwo" because it used to trim the comment on an existing Shebang line, but now it just adds one.</p>
  * <p>Created by IntelliJ IDEA.
  * <p>Date: 12/21/20
  * <p>Time: 3:28 AM
