@@ -16,7 +16,8 @@
 ### TrimTwo must be installed for this to work. To install, execute TrimTwo from inside your IDE with a single parameter of "install". 
 
 
-for f in $(ls *.java);
+for f in *.java
 do
+  echo $f
   TrimTwo $f ~/bin/;
 done;
