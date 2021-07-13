@@ -1,6 +1,8 @@
 package com.neptunedreams.tools.gui;
 
 import java.lang.reflect.Field;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -50,7 +52,6 @@ public enum DigitFilter {
   ;
   private static final List<String> testCases = Arrays.asList(
       "0123456789", // sRgx
-//      "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669", // sRgx
       "abc123def456G7890", // sRgx
       "(323) 225-7285", // sRgx
       "323.225.7285", // sRgx
@@ -59,6 +60,10 @@ public enum DigitFilter {
       "313-425-7075",
       "313.425.7075",
       "(313) 425-7075",
+      "[323] 225 - 7285" // sRgx
+
+      // non-ascii digits
+//      "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669", // sRgx
 //      "\u0660\u0661\u0662-\u0663\u0664\u0665-\u0666\u0667\u0668\u0669", // Reg2
 //      "\u09E9\u09EA\u09EB-\u09EC\u09ED\u09EE\u09EF-\u0A66\u0A67\u0A68", // Reg2
 //      "\u09E9\u09EB-\u09EC\u09ED\u09EE\u09EF-\u0A66\u0A67\u0A68\u0A69", // Reg2
@@ -68,7 +73,6 @@ public enum DigitFilter {
 //      "[\u0660\u0661\u0662] \u0663\u0664\u0665 - \u0666\u0667\u0668\u0669", // sRgx
 //      "\u0660.\u0661.\u0662.\u0663.\u0664\u0665\u0666\u0667\u0668\u0669", // sRgx
 //      "\u0660\u0661\u0662\u0663.\u0664.\u0665\u0666.\u0667\u0668\u0669" // sRgx
-      "[323] 225 - 7285" // sRgx
   );
   
   private static final Map<Byte, String> dirMap = createDirMap();
@@ -91,46 +95,74 @@ public enum DigitFilter {
   }
 
   public static void main(String[] args) {
+    System.out.printf("%17s    %16s    %16s    %16s    %16s    %16s    %16s    %16s    %16s    %16s    %16s    %16s    %16s%n", 
+        "Original", 
+        "Regex", "Regex-Precompile", "Regix-Single-char", "Rgx, 1 chr PrCmp", "Coll. String", "Coll(***) String", "Coll(***) Int", "Coll. Char", "Coll(***) Char", "Imperative", "Imp, Char Iter", "Imp, Cheat"); // NON-NLS
     for (String s: testCases) {
-      System.out.printf("%16s -- Regex: %16s -- RgxPre: %16s -- RgxSng: %16s -- StrC: %16s -- StrC2: %16s -- IntC: %16s -- ChrC: %16s -- ChC2: %16s -- Impr: %16s%n", s, regex(s), regex2(s), regexSingle(s), stringCollector(s), stringCollector2(s), intCollector(s), charCollector(s), charCollector2(s), imperative(s)); // NON-NLS
+      System.out.printf("%17s 1: %16s 2: %16s 3: %16s 4: %16s 5: %16s 6: %16s 7: %16s 8: %16s 9: %16s A: %16s B: %16s C: %16s%n", 
+          s, 
+          regex(s), 
+          rxPre(s),
+          regexSingle(s),
+          regexSngPre(s),
+          stringCollector(s),
+          stringCollector2(s),
+          intCollector(s),
+          charCollector(s),
+          charCollector2(s),
+          imperative(s),
+          imperativeCharItr(s),
+          impIf(s)
+      ); // NON-NLS
     }
 
     System.out.println("---");
     System.out.println("All Results in µs");
-    System.out.printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s%n", "Regex", "Pre-Regex", "Sng-Regex", "String Clctr", "String Clctr 2", "Int Clctr", "Char Clctr", "Char Clctr 2", "Imperative"); // NON-NLS
+    System.out.printf("%12s\t%12s\t%12s\t%12s\t%12s\t%12s\t%12s\t%12s\t%12s\t%12s\t%12s\t%12s%n", "Regex", "Pre-Regex", "Sng-Regex", "Sng-PreRx", "String Clctr", "String Clctr 2", "Int Clctr", "Char Clctr", "Char Clctr 2", "Imperative", "Imp-ChrItr", "Imp-Cheat"); // NON-NLS
     Timer tRegex = new Timer(DigitFilter::regex);
-    Timer tRegx2 = new Timer(DigitFilter::regex2);
+    Timer tRegx2 = new Timer(DigitFilter::rxPre);
     Timer tSglRx = new Timer(DigitFilter::regexSingle);
+    Timer txSPre = new Timer(DigitFilter::regexSngPre);
     Timer tStCol = new Timer(DigitFilter::stringCollector);
     Timer tStCl2 = new Timer(DigitFilter::stringCollector2);
     Timer tInCol = new Timer(DigitFilter::intCollector);
     Timer tChCol = new Timer(DigitFilter::charCollector);
     Timer tChCl2 = new Timer(DigitFilter::charCollector2);
     Timer tImper = new Timer(DigitFilter::imperative);
+    Timer tImpr2 = new Timer(DigitFilter::imperativeCharItr);
+    Timer tImpr3 = new Timer(DigitFilter::impIf);
 
     for (int i=0; i<500; ++i) {
       System.out.printf(
-          "%12.6f\t%12.6f\t%12.6f\t%12.6f\t%12.6f\t%12.6f\t%12.6f\t%12.6f\t%12.6f%n",
+          "%12.6f\t%12.6f\t%12.6f\t%12.6f\t%12.6f\t%12.6f\t%12.6f\t%12.6f\t%12.6f\t%12.6f\t%12.6f\t%12.6f%n",
           tRegex.time(),
           tRegx2.time(),
           tSglRx.time(),
+          txSPre.time(),
           tStCol.time(),
           tStCl2.time(),
           tInCol.time(),
           tChCol.time(),
           tChCl2.time(),
-          tImper.time()
+          tImper.time(),
+          tImpr2.time(),
+          tImpr3.time()
       ); // NON-NLS
     }
-    System.out.printf("Median: tRegex = %12.6f  %12.6f%n", tRegex.median(), tRegex.qMedian()); // NON-NLS
-    System.out.printf("Median: tRegx2 = %12.6f  %12.6f%n", tRegx2.median(), tRegx2.qMedian()); // NON-NLS
-    System.out.printf("Median: tSglRx = %12.6f  %12.6f%n", tSglRx.median(), tSglRx.qMedian()); // NON-NLS
-    System.out.printf("Median: tStCol = %12.6f  %12.6f%n", tStCol.median(), tStCol.qMedian()); // NON-NLS
-    System.out.printf("Median: tStCl2 = %12.6f  %12.6f%n", tStCl2.median(), tStCl2.qMedian()); // NON-NLS
-    System.out.printf("Median: tInCol = %12.6f  %12.6f%n", tInCol.median(), tInCol.qMedian()); // NON-NLS
-    System.out.printf("Median: tChCol = %12.6f  %12.6f%n", tChCol.median(), tChCol.qMedian()); // NON-NLS
-    System.out.printf("Median: tChCl2 = %12.6f  %12.6f%n", tChCl2.median(), tChCl2.qMedian()); // NON-NLS
-    System.out.printf("Median: tImper = %12.6f  %12.6f%n", tImper.median(), tImper.qMedian()); // NON-NLS
+    
+    // I manually sorted these by speed, although the order does sometimes change. They go fastest to slowest.
+    System.out.printf("Median: tImper =\t%12.6f\t%12.6f\t%12.6f\t%12.6f%n", tImper.median(), tImper.qMedian(), tImper.start(), tImper.high()); // NON-NLS
+    System.out.printf("Median: tImItr =\t%12.6f\t%12.6f\t%12.6f\t%12.6f%n", tImpr2.median(), tImpr2.qMedian(), tImpr2.start(), tImpr2.high()); // NON-NLS
+    System.out.printf("Median: tImCht =\t%12.6f\t%12.6f\t%12.6f\t%12.6f%n", tImpr3.median(), tImpr3.qMedian(), tImpr3.start(), tImpr3.high()); // NON-NLS
+    System.out.printf("Median: tInCol =\t%12.6f\t%12.6f\t%12.6f\t%12.6f%n", tInCol.median(), tInCol.qMedian(), tInCol.start(), tInCol.high()); // NON-NLS
+    System.out.printf("Median: tSxPre =\t%12.6f\t%12.6f\t%12.6f\t%12.6f%n", txSPre.median(), txSPre.qMedian(), txSPre.start(), txSPre.high()); // NON-NLS
+    System.out.printf("Median: tSglRx =\t%12.6f\t%12.6f\t%12.6f\t%12.6f%n", tSglRx.median(), tSglRx.qMedian(), tSglRx.start(), tSglRx.high()); // NON-NLS
+    System.out.printf("Median: tChCl2 =\t%12.6f\t%12.6f\t%12.6f\t%12.6f%n", tChCl2.median(), tChCl2.qMedian(), tChCl2.start(), tChCl2.high()); // NON-NLS
+    System.out.printf("Median: tStCl2 =\t%12.6f\t%12.6f\t%12.6f\t%12.6f%n", tStCl2.median(), tStCl2.qMedian(), tStCl2.start(), tStCl2.high()); // NON-NLS
+    System.out.printf("Median: tChCol =\t%12.6f\t%12.6f\t%12.6f\t%12.6f%n", tChCol.median(), tChCol.qMedian(), tChCol.start(), tChCol.high()); // NON-NLS
+    System.out.printf("Median: tStCol =\t%12.6f\t%12.6f\t%12.6f\t%12.6f%n", tStCol.median(), tStCol.qMedian(), tStCol.start(), tStCol.high()); // NON-NLS
+    System.out.printf("Median: tRxPre =\t%12.6f\t%12.6f\t%12.6f\t%12.6f%n", tRegx2.median(), tRegx2.qMedian(), tRegx2.start(), tRegx2.high()); // NON-NLS
+    System.out.printf("Median: tRegex =\t%12.6f\t%12.6f\t%12.6f\t%12.6f%n", tRegex.median(), tRegex.qMedian(), tRegex.start(), tRegex.high()); // NON-NLS
 
 //    for (char c=27; c<0xFF; ++c) {
 //      System.out.printf("%1c = 0x%04x: %s%n", c, (int)c, getDirectionality(c)); // NON-NLS
@@ -144,13 +176,13 @@ public enum DigitFilter {
 //    System.out.printf("%s%n", "\u06a8\u06ad\u0660\u0661\u0662\u0677\u0678\u06f1\u06f2\u06f3\u06fa\u06fd"); // NON-NLS
   }
 
-  private static String getDirectionality(char c) {
-    byte dir = Character.getDirectionality(c);
-    return dirMap.get(dir);
-  }
+//  private static String getDirectionality(char c) {
+//    byte dir = Character.getDirectionality(c);
+//    return dirMap.get(dir);
+//  }
 
   private static class Timer {
-    private final List<Double> results = new LinkedList<>();
+    private final LinkedList<Double> results = new LinkedList<>();
     private final UnaryOperator<String> function;
 
     Timer(UnaryOperator<String> function) {
@@ -182,6 +214,16 @@ public enum DigitFilter {
       Collections.sort(results);
       return results.get(results.size()/4);
     }
+    
+    public double start() {
+      Collections.sort(results);
+      return results.get(0);
+    }
+    
+    public double high() {
+      Collections.sort(results);
+      return results.getLast();
+    }
   }
 
   private static final Pattern NON_DIGIT_SERIES = Pattern.compile("\\D*");
@@ -192,12 +234,16 @@ public enum DigitFilter {
     return Pattern.compile("\\D*").matcher(s).replaceAll("");
   }
 
-  private static String regex2(String s) {
+  private static String rxPre(String s) {
     return NON_DIGIT_SERIES.matcher(s).replaceAll("");
   }
   
-  private static String regexSingle(String s) {
+  private static String regexSngPre(String s) {
     return SINGLE_NON_DIGIT.matcher(s).replaceAll("");
+  }
+
+  private static String regexSingle(String s) {
+    return Pattern.compile("\\D").matcher(s).replaceAll("");
   }
 
   /**
@@ -213,8 +259,9 @@ public enum DigitFilter {
         .collect(
             StringBuilder::new,                                  // Supplier<StringDigit>
             (stringBuilder, i) -> stringBuilder.append((char)i), // ObjectIntConsumer<StringBuilder>
-            (b, b2) -> b.append(b2.toString())                   // BiConsumer<StringBuilder, StringBuilder>
+//            (b, b2) -> b.append(b2.toString())                   // BiConsumer<StringBuilder, StringBuilder>
             // The third parameter is only used with spliterators, but it can't be null.
+            prohibitSpliterator()
         ).toString();
   }
 
@@ -234,7 +281,13 @@ public enum DigitFilter {
     return s.chars()
         .filter(Character::isDigit)
         .mapToObj(c -> String.valueOf((char) c))
-        .collect(StringBuilder::new, StringBuilder::append, (b1, b2) -> b1.append(b2.toString())).toString();
+        .collect(
+            StringBuilder::new,                  // Supplier
+            StringBuilder::append,               // Accumulator
+//            (b1, b2) -> b1.append(b2.toString()) // Combiner, only used by spliterators
+            prohibitSpliterator()
+        )
+        .toString();
   }
 
   private static String charCollector(String s) {
@@ -246,9 +299,12 @@ public enum DigitFilter {
       @Override public BinaryOperator<StringBuilder> combiner() {
 //        throw new AssertionError("Combiner is necessary");
         return (stringBuilder, stringBuilder2) -> {
-          stringBuilder.append(stringBuilder2.toString());
+//          stringBuilder.append(stringBuilder2.toString());
+          prohibitSpliterator().accept(stringBuilder, stringBuilder2);
           return stringBuilder;
         };
+//        final BiConsumer<Object, Object> objectObjectBiConsumer = prohibitSpliterator();
+//        return objectObjectBiConsumer;
       }
     };
     return s.chars()
@@ -261,11 +317,16 @@ public enum DigitFilter {
     return s.chars()
         .filter(Character::isDigit)
         .mapToObj(c -> (char)c)
-        .collect(StringBuilder::new, (StringBuilder::append), (b, b2) -> b.append(b2.toString())).toString();
+        .collect(
+            StringBuilder::new,                 // Supplier
+            (StringBuilder::append),            // Accumulator
+            prohibitSpliterator()
+//            (b, b2) -> b.append(b2.toString())  // Combiner, only used by spliterators
+        ).toString();
   }
 
   private static String imperative(String s) {
-    StringBuilder builder = new StringBuilder();
+    StringBuilder builder = new StringBuilder(s.length());
     for (int i=0; i<s.length(); ++i) {
       char digit = s.charAt(i);
       if (Character.isDigit(digit)) {
@@ -274,4 +335,36 @@ public enum DigitFilter {
     }
     return builder.toString();
   }
+  
+  private static String imperativeCharItr(String s) {
+    StringBuilder builder = new StringBuilder(s.length());
+    CharacterIterator characterIterator = new StringCharacterIterator(s);
+    char c = characterIterator.first();
+    while (c != CharacterIterator.DONE) {
+      if (Character.isDigit(c)) {
+        builder.append(c);
+      }
+      c = characterIterator.next();
+    }
+    return builder.toString();
+  }
+
+  private static String impIf(String s) {
+    StringBuilder builder = new StringBuilder(s.length());
+    for (int i = 0; i < s.length(); ++i) {
+      char digit = s.charAt(i);
+      if ((digit >= '0') && (digit <= '9')) {
+        builder.append(digit);
+      }
+    }
+    return builder.toString();
+  }
+
+  // Not sure if this is ever actually necessary. If it is, it's a good way to prevent an operator from getting
+  // used in a spliterator.
+  @SuppressWarnings("unchecked")
+  private static <T> BiConsumer<T, T> prohibitSpliterator() { return (BiConsumer<T, T>) PROHIBIT_SPLITERATOR; }
+  private static final BiConsumer<?, ?> PROHIBIT_SPLITERATOR = (a, b) -> {
+    throw new IllegalStateException("Spliterator use illegal with this accumulator");
+  };
 }
