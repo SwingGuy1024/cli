@@ -34,22 +34,35 @@ public enum TrimTwo {
         showUsageAndExit();
       }
     }
-    processFile(args[0], args[1]);
+    boolean isAllowedToMakeExecutable = processFile(args[0], args[1]);
+    if (isAllowedToMakeExecutable) {
+      System.out.println(args[0]);
+    } else {
+      System.err.printf("Unable to make files executable.%n"); // NON-NLS
+    }
   }
 
-  private static void processFile(String filePath, String outPathDirectory) throws IOException {
+  /**
+   * Process the file: Modify it, copy it, and set it to executable (if allowed to do so)
+   * @param filePath The path to the input file
+   * @param outPathDirectory The destination path
+   * @return true if the file was successfully set as executable
+   * @throws IOException If the destination file couldn't be created.
+   */
+  private static boolean processFile(String filePath, String outPathDirectory) throws IOException {
     try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
       String oneLine = reader.readLine();
       String outFileName;
       if (oneLine.toLowerCase().startsWith(USE_PREFIX)) {
         outFileName = oneLine.substring(USE_PREFIX.length()).trim();
       } else {
+        // strip out the file extension. File extensions disable the Shebang feature.
         int dSpot = Math.max(0, filePath.lastIndexOf('/'));
         String simpleName = filePath.substring(dSpot);
         outFileName = simpleName.replaceAll("\\.java", "");
       }
       String fullOutPath = makeOutPath(outPathDirectory, outFileName);
-      writeToFile(oneLine, reader, fullOutPath);
+      return writeToFile(oneLine, reader, fullOutPath);
     }
   }
 
@@ -60,7 +73,16 @@ public enum TrimTwo {
     return String.format("%s/%s", outPathDirectory, outFileName);
   }
 
-  private static void writeToFile(final String oneLine, final BufferedReader reader, String outPath) throws IOException {
+  /**
+   * Write a modified copy of the file to the destination directory specified by outPath. The modification is to add a shebang line
+   * at the beginning of the file. Also sets the output file to be executable, if it has permission to do so.
+   * @param oneLine The first line of the input file, which has already been read.
+   * @param reader The reader from which the rest of the input lines will be read.
+   * @param outPath The path of the output file.
+   * @return True if it was able to set the file's executable flag, false otherwise.
+   * @throws IOException If the output file can't be created.
+   */
+  private static boolean writeToFile(final String oneLine, final BufferedReader reader, String outPath) throws IOException {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(outPath))) {
       writer.write(SHEBANG_LINE);
       String line = oneLine;
@@ -71,8 +93,7 @@ public enum TrimTwo {
         line = reader.readLine();
       }
     }
-    //noinspection ResultOfMethodCallIgnored
-    new File(outPath).setExecutable(true);
+    return new File(outPath).setExecutable(true);
   }
 
   private static void doInstallAndExit() throws IOException {
