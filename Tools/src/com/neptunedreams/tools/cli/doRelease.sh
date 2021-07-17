@@ -18,6 +18,6 @@
 
 for f in *.java
 do
-  echo $f
+#  echo $f
   TrimTwo $f ~/bin/;
 done;

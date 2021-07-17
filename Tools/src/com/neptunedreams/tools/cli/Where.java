@@ -3,7 +3,6 @@ package com.neptunedreams.tools.cli;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -19,7 +18,6 @@ import java.util.Arrays;
  *
  * @author Miguel Mu\u00f1oz
  */
-@SuppressWarnings("CallToRuntimeExec")
 public enum Where {
   ;
 
@@ -30,8 +28,9 @@ public enum Where {
       System.out.printf("Usage: where <dir>%n"); // NON-NLS
       System.exit(0);
     }
-    Process pathProcess = Runtime.getRuntime().exec("path");
-    String path = new String(pathProcess.getInputStream().readAllBytes(), Charset.defaultCharset());
+    String path = System.getenv().get("PATH");
+//    Process pathProcess = Runtime.getRuntime().exec("path");
+//    String path = new String(pathProcess.getInputStream().readAllBytes(), Charset.defaultCharset());
     String separator = System.getProperty("path.separator");
     String target = args[0];
     String[] pathElements = path.split(separator);
@@ -47,7 +46,6 @@ public enum Where {
     // Warns me about a possible null value from dir.list(), but this can't happen because I test it for a directory.
     // (It can't be a directory if the path is correct, but it's possible to put a non-existent path or even a file onto
     // the path by accident.)
-    //noinspection ConstantConditions
     Arrays.stream(pathElements)
         .map(String::trim) // last entry mysteriously gets a \n appended without this.
         .map(Where::coverTilde)

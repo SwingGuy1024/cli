@@ -1,6 +1,7 @@
 package com.neptunedreams.tools.cli;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -12,7 +13,11 @@ import java.util.TreeMap;
 public enum SysProps {
   ;
 
+  private static final Map<Character, String> specialChars = makeSpecialCharacters();
+
   public static void main(String[] args) {
+    specialChars.forEach((c, s) -> System.out.printf("%s = %s%n", s, String.format("\\u%04x", (int) c)));
+
     Properties props = System.getProperties();
     Map<String, String> propMap = new TreeMap<>();
     int maxLength = 0;
@@ -26,6 +31,16 @@ public enum SysProps {
       String value = asPath(stringStringEntry.getValue(), maxLength);
       System.out.printf(format, stringStringEntry.getKey(), value);
     }
+  }
+  
+  
+  private static Map<Character, String> makeSpecialCharacters() {
+    Map<Character, String> map = new HashMap<>();
+    map.put('\n', "\\n");
+    map.put('\r', "\\r");
+    map.put('\f', "\\f");
+    map.put('\t', "\\t");
+    return map;
   }
 
   private static String asPath(String text, int indent) {
@@ -59,6 +74,11 @@ public enum SysProps {
     StringBuilder builder = new StringBuilder();
     for (int ii = 0; ii < s.length(); ++ii) {
       char c = s.charAt(ii);
+      if (specialChars.containsKey(c)) {
+        builder
+            .append(specialChars.get(c))
+            .append(" = ");
+      }
       if ((c < 0x20) || (c > 0xFF)) {
         String fmt = String.format("%04x", (int) c);
         builder.append("\\u").append(fmt);
@@ -70,7 +90,7 @@ public enum SysProps {
   }
 
   /**
-   * counts how many times char c appears in String s
+   * Counts how many times char c appears in String s
    *
    * @param s The String
    * @param c The character to count

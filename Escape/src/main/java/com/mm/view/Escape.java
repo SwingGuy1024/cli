@@ -24,6 +24,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import javax.swing.AbstractAction;
@@ -259,17 +260,17 @@ public class Escape extends JPanel
 		tb.add(mFontBox);
 		tb.add(new CharacterCounter());
 
-		KeyListener keyListener = new KeyAdapter() {
-			@Override
-			public void keyTyped(final KeyEvent e) {
-				super.keyTyped(e);
-				Escape.this.keyTyped(e);
-			}
-		};
-		myMasterView.addKeyListener(keyListener);
-		mySlaveView.addKeyListener(keyListener);
-		getRootPane().getContentPane().addKeyListener(keyListener);
-		Toolkit.getDefaultToolkit().addAWTEventListener(e -> keyTyped((KeyEvent) e), AWTEvent.KEY_EVENT_MASK);
+//		KeyListener keyListener = new KeyAdapter() {
+//			@Override
+//			public void keyTyped(final KeyEvent e) {
+//				super.keyTyped(e);
+//				Escape.this.keyTyped(e);
+//			}
+//		};
+//		myMasterView.addKeyListener(keyListener);
+//		mySlaveView.addKeyListener(keyListener);
+//		getRootPane().getContentPane().addKeyListener(keyListener);
+//		Toolkit.getDefaultToolkit().addAWTEventListener(e -> keyTyped((KeyEvent) e), AWTEvent.KEY_EVENT_MASK);
 	}
 
 	@Override
@@ -277,10 +278,10 @@ public class Escape extends JPanel
 		return sFrame.getRootPane();
 	}
 
-	private void keyTyped(KeyEvent e) {
-		int modsEx = e.getModifiersEx();
-		System.out.printf("%5d (%c) %s%n", e.getKeyCode(), e.getKeyChar(), modString(modsEx)); // NON-NLS
-	}
+//	private void keyTyped(KeyEvent e) {
+//		int modsEx = e.getModifiersEx();
+//		System.out.printf("%5d (%c) %s%n", e.getKeyCode(), e.getKeyChar(), modString(modsEx)); // NON-NLS
+//	}
 	
 	private static String modString(int modEx) {
 		java.util.List<String> mods = new LinkedList<>();
@@ -326,7 +327,7 @@ public class Escape extends JPanel
 //		doc.setUpdateChange(true);
 		myMasterView.setDocument(doc);
 		myMasterView.getDocument().addDocumentListener(new Transformer(mySlaveView));
-		myMasterView.setText(makeInitialText());
+//		myMasterView.setText(makeInitialText());
 		mFileChanged = false;
 		setForWords(myMasterView);
 		setForWords(mySlaveView);
@@ -646,6 +647,15 @@ public class Escape extends JPanel
 			return outBuffer.toString();
 	}
 	
+	private static final int tab = 4;
+	private static String fullTab = getSpacerString(tab);
+	
+	private static String getSpacerString(int length) {
+		char[] chars = new char[length];
+		Arrays.fill(chars, ' ');
+		return new String(chars);
+	}
+	
 	/*
 	 * Converts encoded &#92;uxxxx to unicode chars
 	 * and changes special saved chars to their original forms
@@ -657,31 +667,40 @@ public class Escape extends JPanel
 			StringBuilder outBuffer = new StringBuilder(len);
 	
 			int x=0;
+			int lineSpot = 0;
 			while(x<len)
 			{
 				char aChar = theString.charAt(x++);
+				lineSpot++;
 				if (aChar == '\\')
 				{
 					int saveX=x;
+					int saveLs = lineSpot;
 					char saveAChar = aChar;
 					//noinspection CatchGenericClass
 					try
 					{
 						aChar = theString.charAt(x++);
-						if(aChar == 'u')
-						{
+						
+						if(aChar == 'u') {
 							// Read the xxxx
-							int value=0;
-							for (int i=0; i<4; i++)
-							{
+							int value = 0;
+							for (int i = 0; i < 4; i++) {
 								aChar = theString.charAt(x++);
 
 								value = (value << 4) + (aChar - getGroupStartChar(aChar));
 							}                       // end for
-							outBuffer.append((char)value);
+							outBuffer.append((char) value);
+						} else if (aChar == 'n') {
+							outBuffer.append('\n');
+							lineSpot = 0;
+						} else if (aChar == 't') {
+							int insert = tab - (lineSpot % tab);
+							outBuffer.append(fullTab, 0, insert);
 						} else {
 							outBuffer.append(saveAChar);
 							x=saveX;
+							lineSpot = saveLs;
 						}                           // end if char=='u'
 					}
 					catch (RuntimeException siob)
