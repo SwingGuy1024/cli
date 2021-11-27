@@ -12,7 +12,15 @@ import java.io.IOException;
  * <p>It also optionally changes the name of the file to xxx if the first line is a comment of this form:</p>
  * <pre>// use: xxx</pre>
  * <p>It also sets the resulting file to executable. This essentially lets me release a Shebang-enabled java file.</p>
- * <p>It's called "TrimTwo" because it used to trim the comment on an existing Shebang line, but now it just adds one.</p>
+ * <p>This tool has an "install" option that assumes the existence of a directory at {@code {$HOME}/bin}, and assumes this directory
+ * is on your classpath.</p>
+ * <p>To install all the other tools, you need to first install this tool. There are three ways to do this. The easiest is to run
+ * this inside your IDE, with the install option. Or you can run it from the root of your compiled files, like this:</p>
+ * <pre>java -cp . com.neptunedreams.tools.cli.TrimTwo install</pre>
+ * <p>Or you can copy it to your {@code {$HOME}/bin} directory and add the shebang line manually.</p>
+ * <p>It's called "TrimTwo" because it used assume the shebang line was the first line, but commented out. It would trim the
+ * first two characters after copying. Now it just adds a shebang line. It assumes you have java 11 installed. If you want
+ * to use a later version of Java, change the definition of SHEBANG_LINE</p>
  * <p>Created by IntelliJ IDEA.
  * <p>Date: 12/21/20
  * <p>Time: 3:28 AM
