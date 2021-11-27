@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Synopsis: java.awt.datatransfer.Clipboard fails to transfer data to Debian Linux OS
  * 
- * Description: String placed on SystemClipboard does not transfer to OS clipboard after java application exits.
+ * Description: Strings placed on the System Clipboard does not transfer to OS clipboard after java application exits.
  * 
  * System/OS/Java:
  * openjdk version "11.0.11" 2021-06-29
