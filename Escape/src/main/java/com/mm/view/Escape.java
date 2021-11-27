@@ -1,19 +1,14 @@
 package com.mm.view;
 
-import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -175,9 +170,6 @@ public class Escape extends JPanel
 				if (askSaveAs()) {
 					doSave();
 				}
-//				JFileChooser ch = makeChooser();
-//				if (askForFile(ch) == JFileChooser.APPROVE_OPTION)
-//					doSave();
 			}
 		};
 
@@ -351,7 +343,7 @@ public class Escape extends JPanel
 		return initialTextBldr.toString();
 	}
 
-	@SuppressWarnings("CharacterComparison")
+//	@SuppressWarnings("CharacterComparison")
 	private void addRange(Font pFont, StringBuilder pInitialTextBldr, char start, char end, String label) {
 		pInitialTextBldr.append("\n\n").append(label).append(":\n");
 		for (char cc = start; cc < end; cc++) {
@@ -502,9 +494,9 @@ public class Escape extends JPanel
 	 */ 
 	private boolean askSaveAs()
 	{
-		boolean nameChosen = false;
+		boolean noNameYet = true;
 		JFileChooser fileDlg = makeChooser();
-		while (!nameChosen)
+		while (noNameYet)
 		{
 			int saveVal = askForFile(fileDlg);
 			if (saveVal == JFileChooser.CANCEL_OPTION) {
@@ -531,13 +523,13 @@ public class Escape extends JPanel
 					return false;
 				}
 				if (replace == JOptionPane.YES_OPTION) {
-					nameChosen = true;
+					noNameYet = false;
 				}
 			}
 			else
 			{
 				mOpenFile = newFile;
-				nameChosen = true;
+				noNameYet = false;
 			}
 		}
 		return true;
@@ -569,21 +561,23 @@ public class Escape extends JPanel
 		try
 		{
 			Writer pen = new BufferedWriter(new FileWriter(mOpenFile));
-			try
-			{
-				pen.write(mySlaveView.getText());
-			}
-			finally
-			{
-				pen.close();
-			}
+			write(pen, mySlaveView.getText());
 		}
 		catch (IOException e)
 		{
 			showError(e);
 		}
 	}
-	
+
+	private void write(final Writer pen, String text) throws IOException {
+		try {
+			pen.write(text);
+		}
+		finally {
+			pen.close();
+		}
+	}
+
 	private void showError(Throwable err)
 	{
 		JOptionPane.showMessageDialog(this, "Error: " + err.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);		
@@ -648,7 +642,7 @@ public class Escape extends JPanel
 	}
 	
 	private static final int tab = 4;
-	private static String fullTab = getSpacerString(tab);
+	private static final String fullTab = getSpacerString(tab);
 	
 	private static String getSpacerString(int length) {
 		char[] chars = new char[length];
@@ -1013,10 +1007,8 @@ public class Escape extends JPanel
 			return txt.substring(0, offset).lastIndexOf('\n');
 		}
 		
-		int lineCount = 1;
 		private String filterText(String inputTxt)
 		{
-			lineCount=1;
 			if (!inputTxt.contains("\\n")) {
 				return inputTxt;
 			}
@@ -1025,14 +1017,12 @@ public class Escape extends JPanel
 			while ((where=buf.indexOf("\\n")) >= 0)
 			{
 				buf.replace(where, where+2, "\n");
-				lineCount++;
 			}
 			return buf.toString();
 		}
 		
 		private String unFilterText(String inputTxt)
 		{
-			lineCount = 1;
 			if (inputTxt.indexOf('\n') < 0) {
 				return inputTxt;
 			}
@@ -1043,7 +1033,6 @@ public class Escape extends JPanel
 			int where;
 			while ((where=buf.indexOf("\n")) >= 0)
 			{
-				lineCount++;
 				buf.replace(where, where+1, "\\n");
 			}
 			return buf.toString();
@@ -1136,7 +1125,7 @@ public class Escape extends JPanel
 		}
 	}
 	
-	private static class Transformer implements DocumentListener
+	private static final class Transformer implements DocumentListener
 	{
 		private final Document  mDestination;
 //		private Caret     mDestCaret;
@@ -1229,7 +1218,7 @@ public class Escape extends JPanel
 	private class CharacterCounter extends JLabel {
 		CharacterCounter() {
 			super("");
-			setFont(new Font("Lucida Console", 0, 12));
+			setFont(new Font("Lucida Console", Font.PLAIN, 12));
 			DocumentListener charListener = new DocumentListener() {
 				@Override
 				public void insertUpdate(DocumentEvent e) {
