@@ -10,6 +10,7 @@ import java.util.TreeMap;
  * Add this to your ~/.bash_profile
  * alias sysProps="java -cp ~/Tools/out/production/Tools SysProps"
  */
+@SuppressWarnings({"HardCodedStringLiteral", "UseOfSystemOutOrSystemErr", "HardcodedFileSeparator", "HardcodedLineSeparator", "MagicNumber"})
 public enum SysProps {
   ;
 
@@ -25,7 +26,7 @@ public enum SysProps {
       propMap.put(key, props.getProperty(key));
       maxLength = Math.max(maxLength, key.length());
     }
-    String format = String.format("%c-%ds = %s", '%', maxLength, "%s%n"); //  Gives "%-29s = %s%n"
+    String format = String.format("%%-%ds = %s", maxLength, "%s%n"); //  Gives "%-29s = %s%n"
 //        String pathFormat = String.format("%c%ds%s", '%', maxLength, " %s%n"); // Gives "%29s %s%n"
     for (Map.Entry<String, String> stringStringEntry : propMap.entrySet()) {
       String value = asPath(stringStringEntry.getValue(), maxLength);
@@ -115,7 +116,7 @@ public enum SysProps {
    * @return a formatted path derived from s
    */
   private static String pathString(String s, int indent) {
-    String format = String.format("\n%c%ds", '%', indent + 3); // Gives "\n%29s"
+    String format = String.format("%n%%%ds", indent + 3); // Gives "\n%29s"
     String lead = String.format(format, " ");
     StringBuilder builder = new StringBuilder(s);
     int tail = s.length();
