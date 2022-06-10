@@ -17,7 +17,7 @@ public enum SysProps {
   private static final Map<Character, String> specialChars = makeSpecialCharacters();
 
   public static void main(String[] args) {
-    specialChars.forEach((c, s) -> System.out.printf("%s = %s%n", s, String.format("\\u%04x", (int) c)));
+//    specialChars.forEach((c, s) -> System.out.printf("%s = %s%n", s, String.format("\\u%04x", (int) c)));
 
     Properties props = System.getProperties();
     Map<String, String> propMap = new TreeMap<>();
