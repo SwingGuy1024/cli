@@ -13,7 +13,8 @@
 # Notes on releasing
 # Path should include ~/bin
 # ~/bin directory should exist.
-### TrimTwo must be installed locally for this to work: 
+### TrimTwo must be installed locally for this to work, but need not be in ~/bin:
+### This will install and update TrimTwo 
 rm TrimTwo
 echo '#!/usr/bin/java --source 11' > TrimTwo
 cat TrimTwo.java >> TrimTwo
