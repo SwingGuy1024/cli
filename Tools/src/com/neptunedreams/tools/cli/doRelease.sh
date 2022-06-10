@@ -13,11 +13,30 @@
 # Notes on releasing
 # Path should include ~/bin
 # ~/bin directory should exist.
-### TrimTwo must be installed for this to work. To install, execute TrimTwo from inside your IDE with a single parameter of "install". 
-
+### TrimTwo must be installed locally for this to work: 
+rm TrimTwo
+echo '#!/usr/bin/java --source 11' > TrimTwo
+cat TrimTwo.java >> TrimTwo
+chmod a+x TrimTwo
 
 for f in *.java
 do
 #  echo $f
-  TrimTwo $f ~/bin/;
+  ./TrimTwo $f ~/bin/;
 done;
+
+
+### The following bash script does most of what TrimTwo does, but it doesn't change the name of the output when
+### the "use" directive is specified.
+#for f in *.java
+#do
+#  fn=`basename $f .java`
+#  if [ -f "$fn" ];
+#  then
+#      "rm ~/binx/$fn"
+#  fi
+#  echo $fn
+#  echo '#!/usr/bin/java --source 11' > ~/binx/$fn
+#  cat $f >> ~/binx/$fn
+#  chmod a+x ~/binx/$fn
+#done;
