@@ -27,6 +27,33 @@ public enum JwtDecode {
   }
   
   private static String decode(String s) {
-    return new String(Base64.getDecoder().decode(s));
+    return format(new String(Base64.getDecoder().decode(s)));
+  }
+  
+  // Primitive JSON Formatter. This doesn't handle special cases, but for
+  // most JwtTokens, it will work fine.
+  private static String format(String json) {
+    String indent = "";
+    StringBuilder builder = new StringBuilder();
+    for (int i=0; i<json.length(); ++i) {
+      char c = json.charAt(i);
+      if (c == '}') {
+        indent = indent.substring(2);
+        newLine(builder, indent);
+      }
+      builder.append(c);
+      if (c == '{') {
+        indent += "  ";
+        newLine(builder, indent);
+      } else if (c == ',') {
+        newLine(builder, indent);
+      }
+    }
+    return builder.toString();
+  }
+  
+  private static newLine(StringBuilder builder, String indent) {
+    builder.append('\n')
+      .append(indent);
   }
 }
