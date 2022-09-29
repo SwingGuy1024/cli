@@ -1,6 +1,13 @@
 package com.neptunedreams.tools.cli;
 
+import java.io.*
+import java.time.*
+import java.time.format.*
 import java.util.Base64;
+import java.util.Formatter;
+
+// I hope this is right. I typed in some changes manually and didn't get a chance to test it, 
+// so there may be typos in this latest version, but the previous version works.
 
 /**
  * <p>Created by IntelliJ IDEA.
@@ -23,7 +30,22 @@ public enum JwtDecode {
       return;
     }
     System.out.println(decode(tokens[0]));
-    System.out.println(decode(tokens[1]));
+    String token1 = decode(tokens[1]);
+    System.out.println(token1);
+    System.out.println(Signature: %d characters%n", tokens[2].length());
+
+    // get expiration time
+    BufferedReader reader = new BufferedReader(new StringReader(token1));
+    String token = "";
+    while (token != null) {
+      if (token.contains("\"exp\":")) {
+        int dotSpot = token.indexOf(':');
+        String timeSeconds = token.substring(dotSpot + 1);
+        long time = Long.parseLong(timeSeconds.trim() + "000"); // convert to milliseconds first
+        System.out.printf("Expires at %s%n", getTime(time));
+      }
+      token = reader.readLine();
+    }
   }
   
   private static String decode(String s) {
@@ -55,5 +77,12 @@ public enum JwtDecode {
   private static newLine(StringBuilder builder, String indent) {
     builder.append('\n')
       .append(indent);
+  }
+
+  private static String getTime(long milliseconds) {
+    Instant instant = Instant.ofEpochMillis(timeMillis);
+    ZonedDateTime zoned DateTime = instant.atZone(ZoneId.systemDefault());
+    DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.FULL);
+    return formatter.format(zonedDateTime);
   }
 }
