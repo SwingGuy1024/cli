@@ -30,21 +30,20 @@ public enum JwtDecode {
       return;
     }
     System.out.println(decode(tokens[0]));
-    String token1 = decode(tokens[1]);
+    String token1 = decode(tokens[1]); // will get used twice
     System.out.println(token1);
     System.out.println(Signature: %d characters%n", tokens[2].length());
 
-    // get expiration time
+    // get expiration time from token1
     BufferedReader reader = new BufferedReader(new StringReader(token1));
-    String token = "";
-    while (token != null) {
+    while ((String token = reader.readLine()) != null) {
       if (token.contains("\"exp\":")) {
         int dotSpot = token.indexOf(':');
         String timeSeconds = token.substring(dotSpot + 1);
-        long time = Long.parseLong(timeSeconds.trim() + "000"); // convert to milliseconds first
-        System.out.printf("Expires at %s%n", getTime(time));
+        long timeMillis = Long.parseLong(timeSeconds.trim()) * 1000L; // convert to milliseconds
+        System.out.printf("Expires at %s%n", getTime(timeMillis));
+        break;
       }
-      token = reader.readLine();
     }
   }
   
@@ -81,7 +80,7 @@ public enum JwtDecode {
 
   private static String getTime(long milliseconds) {
     Instant instant = Instant.ofEpochMillis(timeMillis);
-    ZonedDateTime zoned DateTime = instant.atZone(ZoneId.systemDefault());
+    ZonedDateTime zonedDateTime = instant.atZone(ZoneId.systemDefault());
     DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.FULL);
     return formatter.format(zonedDateTime);
   }
