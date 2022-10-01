@@ -5,9 +5,6 @@ import java.time.*;
 import java.time.format.*;
 import java.util.Base64;
 
-// I hope this is right. I typed in some changes manually and didn't get a chance to test it,
-// so there may be typos in this latest version, but the previous version works.
-
 /**
  * <p>Created by IntelliJ IDEA.
  * <p>Date: 2/26/21
