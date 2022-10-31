@@ -22,16 +22,19 @@ public enum Where {
   ;
 
   private static final String FILE_SEPARATOR = System.getProperty("file.separator");
+  private static final String[] empty = new String[0];
 
   public static void main(String[] args) throws IOException {
     if (args.length != 1) {
       System.out.printf("Usage: where <dir>%n"); // NON-NLS
       System.exit(0);
     }
-    String path = System.getenv().get("PATH");
-//    Process pathProcess = Runtime.getRuntime().exec("path");
-//    String path = new String(pathProcess.getInputStream().readAllBytes(), Charset.defaultCharset());
     String separator = System.getProperty("path.separator");
+    String s2 = separator + separator;
+    String path = System.getenv().get("PATH");
+    while (path.contains(s2)) {
+      path = path.replace(s2, separator);
+    }
     String target = args[0];
     String[] pathElements = path.split(separator);
     
@@ -46,14 +49,19 @@ public enum Where {
     // Warns me about a possible null value from dir.list(), but this can't happen because I test it for a directory.
     // (It can't be a directory if the path is correct, but it's possible to put a non-existent path or even a file onto
     // the path by accident.)
+    //noinspection ConstantConditions
     Arrays.stream(pathElements)
         .map(String::trim) // last entry mysteriously gets a \n appended without this.
         .map(Where::coverTilde)
         .map(File::new)
-        .filter(dir-> dir.isDirectory() && Arrays.asList(dir.list()).contains(target))
+        .filter(dir-> dir.isDirectory() && Arrays.asList(nullToEmpty(dir.list())).contains(target))
         .forEach(d->printPath(d, target));
   }
-  
+
+  private static String[] nullToEmpty(String[] s) {
+    return (s == null) ? empty : s;
+  }
+
   private static void printPath(File dirPath, String target) {
     String fullPath = String.format("%s%s%s", dirPath, FILE_SEPARATOR, target);
     System.out.printf("%s%s%n", fullPath, isLinkOrExecutable(fullPath)); // NON-NLS
