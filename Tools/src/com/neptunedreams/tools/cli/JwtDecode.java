@@ -5,9 +5,6 @@ import java.time.*;
 import java.time.format.*;
 import java.util.Base64;
 
-// I hope this is right. I typed in some changes manually and didn't get a chance to test it,
-// so there may be typos in this latest version, but the previous version works.
-
 /**
  * <p>Created by IntelliJ IDEA.
  * <p>Date: 2/26/21
@@ -71,12 +68,12 @@ public enum JwtDecode {
     StringBuilder builder = new StringBuilder();
     for (int i = 0; i < json.length(); ++i) {
       char c = json.charAt(i);
-      if ((c == '}') || (c == ']')) {
+      if (c == '}') {
         indent = indent.substring(2);
         newLine(builder, indent);
       }
       builder.append(c);
-      if ((c == '{') || (c == '[')) {
+      if (c == '{') {
         indent += "  ";
         newLine(builder, indent);
       } else if (c == ',') {
@@ -84,11 +81,6 @@ public enum JwtDecode {
       }
     }
     return builder.toString();
-  }
-
-  private static void newLine(StringBuilder builder, String indent) {
-    builder.append('\n')
-        .append(indent);
   }
 
   /**
@@ -105,6 +97,11 @@ public enum JwtDecode {
       }
     }
     return input.substring(0, i+1);
+  }
+
+  private static void newLine(StringBuilder builder, String indent) {
+    builder.append('\n')
+        .append(indent);
   }
 
   private static String getTime(long seconds) {
