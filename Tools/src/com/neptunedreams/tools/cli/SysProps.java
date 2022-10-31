@@ -116,7 +116,7 @@ public enum SysProps {
    * @return a formatted path derived from s
    */
   private static String pathString(String s, int indent) {
-    String format = String.format("%n%%%ds", indent + 3); // Gives "\n%29s"
+    String format = String.format("%n%%%ds", indent + 3); // Example: For indent = 26, gives "%n%29s"
     String lead = String.format(format, " ");
     StringBuilder builder = new StringBuilder(s);
     int tail = s.length();
