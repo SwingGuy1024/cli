@@ -7,7 +7,7 @@ package com.neptunedreams.tools.cli;
  * <p>Date: 6/9/22
  * <p>Time: 2:12 PM
  *
- * @author Miguel Mu\u00f1oz
+ * @author Miguel Mu–oz
  */
 @SuppressWarnings("HardCodedStringLiteral")
 public enum Primes {
@@ -22,6 +22,10 @@ public enum Primes {
     }
 
     long arg = Long.parseLong(args[0]);
+    findPrimes(arg);
+  }
+
+  private static void findPrimes(long arg) {
     arg = (arg < 0L) ? -arg : arg;
     int exp = 0;
     while ((arg % 2L) == 0) {

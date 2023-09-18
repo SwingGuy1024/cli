@@ -2,9 +2,7 @@
 package com.neptunedreams.tools.cli;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.io.StringWriter;
 
 /**
@@ -21,61 +19,57 @@ import java.io.StringWriter;
  * <p>Date: 3/12/21
  * <p>Time: 7:47 AM
  *
- * @author Miguel Mu\u00f1oz
+ * @author Miguel Mu–oz
  */
 @SuppressWarnings({"UseOfSystemOutOrSystemErr", "HardCodedStringLiteral", "HardcodedFileSeparator"})
 public enum SplitPath {
   ;
   public static void main(String[] args) throws IOException {
     String separator = System.getProperty("path.separator");
-    InputStream inputStream = System.in;
-    if (args.length == 1) {
-      if (args[0].length() == 1) {
-        separator = args[0];
-      } else {
-        inputStream = stringToInputStream(args[0]);
-      }
-    } else if (args.length == 2) {
-      if (args[0].length() == 1) {
-        separator = args[0];
-        inputStream = stringToInputStream(args[1]);
-      } else if (args[1].length() == 1) {
-        separator = args[1];
-        inputStream = stringToInputStream(args[0]);
-      } else {
-        showUsage();
-      }
-    } else {
-      showUsage();
+    if ((args.length == 1) && (args[0].startsWith("-h") || args[0].startsWith("--h"))) {
+      showUsageAndExit();
     }
-    process(separator, inputStream);
-  }
-  
-  private static InputStream stringToInputStream(String s) {
-    StringReader reader = new StringReader(s);
-
-    return new InputStream() {
-      @Override
-      public int read() throws IOException {
-        return reader.read();
+    if (args.length == 0) {
+      String path = readSystemInput();
+      process(separator, path);
+    } else {
+      int start = 0;
+      if (args[0].length() == 1) {
+        separator = args[0];
+        start = 1;
       }
-    };
+      process(separator, combineArgs(args, start));
+    }
+  }
+
+  private static String combineArgs(String[] args, int index) {
+    // I'm assuming here that no path has two or more consecutive spaces. 
+    StringBuilder builder = new StringBuilder(args[index]);
+    for (int i=index+1; i<args.length; ++i) {
+      builder.append(' ').append(args[i]);
+    }
+    return builder.toString();
+  }
+
+  private static void process(String separator, String path) {
+    String[] pieces = path.split(separator);
+    for (String p : pieces) {
+      System.out.println(p);
+    }
   }
   
-  private static void process(String separator, InputStream in) throws IOException {
-    try (InputStreamReader reader = new InputStreamReader(in)) {
+  private static String readSystemInput() throws IOException {
+    try (InputStreamReader reader = new InputStreamReader(System.in)) {
       StringWriter writer = new StringWriter();
       reader.transferTo(writer);
-      String[] pieces = writer.toString().split(separator);
-      for (String p : pieces) {
-        System.out.println(p);
-      }
+      return writer.toString();
     }
   }
   
-  private static void showUsage() {
+  private static void showUsageAndExit() {
     System.err.println("Usage: echo $path | splitpath ");
-    System.err.println("       echo $path | splitpath :");
+    System.err.println("       echo $path | : splitpath");
+    System.err.println("       path | splitpath");
     System.err.println("       splitpath a/b/c");
     System.err.println("       splitpath a/b/c /");
     System.err.println("       splitpath / a/b/c");

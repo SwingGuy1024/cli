@@ -13,6 +13,7 @@
 # Notes on releasing
 # Path should include ~/bin
 # ~/bin directory should exist.
+echo 'p=' $0
 ### TrimTwo must be installed locally for this to work, but need not be in ~/bin:
 ### This will install and update TrimTwo 
 rm TrimTwo

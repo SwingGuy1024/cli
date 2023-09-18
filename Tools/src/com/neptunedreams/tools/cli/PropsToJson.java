@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * todo: modify for prop categories: a.b.c, a.b.d
@@ -13,7 +14,7 @@ import java.util.Set;
  * <p>Date: 10/30/22
  * <p>Time: 11:46 PM
  *
- * @author Miguel Mu\u00f1oz
+ * @author Miguel Mu–oz
  */
 public enum PropsToJson {
   ;
@@ -38,7 +39,8 @@ public enum PropsToJson {
   public static String toJson(Properties props) {
     StringBuilder builder = new StringBuilder();
     builder.append('{');
-    Set<String> propNames = props.stringPropertyNames();
+    Set<String> propNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+    propNames.addAll(props.stringPropertyNames());
     Iterator<String> itr = propNames.iterator();
     appendValue(props, builder, itr.next());
     while (itr.hasNext()) {

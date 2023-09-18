@@ -1,0 +1,311 @@
+// skip
+package com.neptunedreams.tools.cli;
+
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Date;
+
+/**
+ * N Numbers divisible by 1459
+ * <pre>
+ *     <b>n</b> <b>Diff</b>
+ *    27
+ *   189 162
+ *   297 108
+ *   351
+ *   459
+ *   513
+ *   621
+ *   783
+ *   837*
+ *   999
+ * </pre>
+ * * 873 is the only one of these not divisible by n27.
+ * 
+ * N Numbers divisible by 8929:
+ * <pre>
+ *     <b>n</b> <b>Diff</b>
+ *    24
+ *   120 96
+ *   168 48
+ *   264 96
+ * </pre>
+ * n20:
+ * 
+ * bigPrimes 9999999999999999999900000000000000000001
+ * Certainty: 1
+ * 99990001        (100009999999899989999000000010001)
+ * 100009999999899989999000000010001
+ * Last number may be grouped by 4s like this:
+ * 1_0000_9999_9998_9998_9999_0000_0001_0001. (This number is prime.)
+ * If you drop off the leasing 1, the two halves complement each other:
+ * 0000_9999_9998_9998
+ * 9999_0000_0001_0001
+ * 
+ * (These two number add up to all nines.)
+ * 
+ * ----
+ *
+ * n9:
+ * $ bigPrimes 999999999000000001
+ * Certainty: 100
+ * 70541929        (14175966169)
+ * 14175966169
+ * Took 228,678 milliseconds = 03:48.678
+ *
+ * n16:
+ * $ bigPrimes 99999999999999990000000000000001
+ * Certainty: 1
+ * 97        (1030927835051546288659793814433)
+ * 206209        (4999431814574273133858337)
+ * 66554101249        (75118313082913)
+ * 75118313082913
+ * Took 270,995,694 milliseconds = 4516:35.694 (75 hours)
+ *
+ * n24:
+ * Gryffindor:bin miguelmunoz$ BigPrimes 999999999999999999999999000000000000000000000001
+ * Certainty: 100
+ * 8929        (111994624258035614290513943330720125433979169)
+ * 111994624258035614290513943330720125433979169
+ * Took 164 milliseconds = 00:00.164
+ *
+ * n27:
+ * BigPrimes 999999999999999999999999999000000000000000000000000001
+ * Certainty: 100
+ * 1459        (685400959561343385880740232350925291295407813570939)
+ * 2458921051        (278740531048202159574231987959391092827489) (unfinished)
+ * BigFactor 999999999999999999999999999000000000000000000000000001
+ * 1459       (685400959561343385880740232350925291295407813570939)
+ * 2458921051       (278740531048202159574231987959391092827489)
+ * 456502382570032651       (610600386089858349939139)
+ * 610600386089858349939139
+ *
+ * n32:
+ * BigFactor 9999999999999999999999999999999900000000000000000000000000000001
+ * 193       (51813471502590673575129533678755958549222797927461139896373057)
+ * 769       (67377726271249250422795232352088372625777370516854538226753)
+ * 1253224535459902849       (53763491189967221358575546107279034709697)
+ * 53763491189967221358575546107279034709697
+ * 
+ * n48:
+ * bigPrimes 999999999999999999999999999999999999999999999999000000000000000000000000000000000000000000000001
+ * Certainty: 1
+ * 13249        (75477394520341157823231942033361008377990791757793040984225224545248698014944524115027549249)
+ * 1067329        (70716147055257711374123575798428608590219877617672752248112085912824160137075376116481)
+ * 70716147055257711374123575798428608590219877617672752248112085912824160137075376116481
+ * Took 7009 milliseconds = 0 days 00:00:07.009
+ *
+ *
+ * n54:
+ * Product = 999999999999999999999999999999999999999999999999999999000000000000000000000000000000000000000000000000000001
+ * BigFactor 999999999999999999999999999999999999999999999999999999000000000000000000000000000000000000000000000000000001
+ * 2925721       (341796090604674881849636380229010216626944264336893367139245334739710314141368913850637159182300704681)
+ * 341796090604674881849636380229010216626944264336893367139245334739710314141368913850637159182300704681       
+ *
+ * n64:
+ * BigFactor 99999999999999999999999999999999999999999999999999999999999999990000000000000000000000000000000000000000000000000000000000000001
+ * 3457       (28926815157651142609198727220133063349725195256002314145212612088516054382412496384148105293607173850159097483367081284350593)
+ * 12289       (2353878684811713126307976826440968618254145598177419980894508266621861370527503977878436430434304976007738423253892203137)
+ * 418725889       (5621526508507127741289425804863402220286755658849219091142721931439642535519230763107739035534783892972374639233)
+ * 338579887181973006729167651681190977281       (16603249990114694613009401045119923580957837937462177950368477911534904193)
+ * 16603249990114694613009401045119923580957837937462177950368477911534904193
+ * 
+ *
+ * n72:
+ * bigPrimes 999999999999999999999999999999999999999999999999999999999999999999999999000000000000000000000000000000000000000000000000000000000000000000000001
+ * Certainty: 1
+ * 433        (2309468822170900692840646651270207852193995381062355658198614318706697457274826789838337182448036951501154734411085450346420323325635103926097)
+ *
+ * n96:
+ * bigPrimes 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001
+ * Certainty: 1
+ * 577        (1733102253032928942807625649913344887348353552859618717504332755632582322357019064124783362218369150779896013864818024263431542461005199306759098786828422876949740034662045060658578856152513)
+ * (unfinished)
+ *
+ * n108:
+ * BigFactor 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001
+ * 68562937       (14585139490159238656885424846954849673373822944603437860312197536111966732113590758225541009131507887417366601433657954296794491169478343671304512524018625398150607229675706570154659506491094452386133925388873)
+ * 14585139490159238656885424846954849673373822944603437860312197536111966732113590758225541009131507887417366601433657954296794491169478343671304512524018625398150607229675706570154659506491094452386133925388873
+ * (Unfinished-web)
+ *
+ * n128:
+ * BigFactor 99999999999999999999999999999999999999999999999999999999999999990000000000000000000000000000000000000000000000000000000000000001
+ * 3457       (28926815157651142609198727220133063349725195256002314145212612088516054382412496384148105293607173850159097483367081284350593)
+ * 12289       (2353878684811713126307976826440968618254145598177419980894508266621861370527503977878436430434304976007738423253892203137)
+ * 418725889       (5621526508507127741289425804863402220286755658849219091142721931439642535519230763107739035534783892972374639233)
+ * 338579887181973006729167651681190977281       (16603249990114694613009401045119923580957837937462177950368477911534904193)
+ * Time elapsed: 2d 0h 22m 54.5s
+ *
+ * n144:
+ * bigPrimes (n144)
+ * Certainty: 1
+ * 196482241        (280-digit number)
+ * (Unfinished)
+ * 
+ * n256:
+ * bigPrimes 9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001
+ * Certainty: 1
+ * 434689        (23004952966373660249051620813961245856232846931944447639576800885230590146058446383506368921228740547839949941222345170915298063443059290665280234834559880742323822318945268916397700424901481288921504799983436433864210964620682833013947902983512350209)
+ * 859393        (26768839129913392649290395446508461037305222327787691591130950432724714008676410423992712206439592302753164083512834257336629532056997544389214520986975552212228657109081955422487384031405284065522415006851855244183058233684336308317554253971713)
+ * (Unfinished)
+ *
+ * n512:
+ * bigPrimes (n512)
+ * Certainty: 1
+ * 39937        (1020-digit number)
+ * 64513        (1015-digit number)
+ * (Unfinished)
+ * 
+ * n1024:
+ * bigPrimes (n1024)
+ * Certainty: 1
+ * 18433        (2044-digit number)
+ * 61441        (2039-digit number)
+ * (Unfinished)
+ *
+ * <p>Created by IntelliJ IDEA.
+ * <p>Date: 8/10/23
+ * <p>Time: 8:53 PM
+ *
+ * @author Miguel Mu–oz
+ */
+@SuppressWarnings("JavadocBlankLines")
+public enum PrimeSeven {
+  ;
+  private static final BigInteger NINE = new BigInteger("9");
+//  private static final BigInteger THIRTEEN = new BigInteger("13");
+  private static final BigInteger SEVEN = new BigInteger("7");
+//  private static final BigInteger NINETEEN = new BigInteger("19");
+  private static final BigInteger THREE_MILLION = new BigInteger("3000000");
+  private static final BigInteger C2 = getCandidate(2);
+
+  private static final BigInteger C4 = getCandidate(4);
+  private static final BigInteger C6 = getCandidate(6);
+  private static final BigInteger C8 = getCandidate(8);
+  private static final BigInteger C9 = getCandidate(9);
+  private static final BigInteger C12 = getCandidate(12);
+  private static final BigInteger C16 = getCandidate(16);
+  private static final BigInteger C18 = getCandidate(18);
+
+  public static void main(String[] args) {
+    System.out.println(new Date());
+//    for (int i=1; i<9; i++) {
+//      System.out.println(getCandidate(i));
+//    }
+    int limit = 30;
+//    System.out.printf("Limit: %d%n", limit); // NON-NLS
+//    long start = System.currentTimeMillis();
+    for (int i=1; i<=limit; ++i) {
+      process(i);
+    }
+//    long end = System.currentTimeMillis();
+//    long duration = end - start;
+//    System.out.printf("%d numbers took %d ms%n", limit, duration); // NON-NLS
+//    System.out.println(format(duration));
+  }
+  
+  private static void process(int n) {
+    BigInteger candidate = getCandidate(n);
+    System.out.printf("n = %3d  ", n); // NON-NLS
+    if (candidate.isProbablePrime(100)) {
+      System.out.printf("              P %s%n", candidate); // NON-NLS
+    } else {
+      boolean found = false;
+      for (int i=1; i<=n; ++i) {
+        String label = String.format("n%03d", i);
+        found = isDiv(candidate, getCandidate(i), label) || found;
+//        if (found) {
+//          break;
+//        }
+      }
+      if (!found) {
+        BigInteger firstFactor = findFirstFactor(candidate);
+        if (firstFactor.equals(BigInteger.ZERO)) {
+          System.out.print("???");
+        } else {
+          isDiv(candidate, firstFactor);
+        }
+      }
+      System.out.println();
+    }
+  }
+
+  private static boolean isDiv(BigInteger candidate, BigInteger divisor) {
+    return isDiv(candidate, divisor, divisor.toString());
+  }
+  
+  private static boolean isDiv(BigInteger candidate, BigInteger divisor, String label) {
+    if (candidate.equals(divisor)) {
+      System.out.printf("P%s ", label); // NON-NLS
+      return false;
+    }
+    if(candidate.mod(divisor).equals(BigInteger.ZERO)) {
+      System.out.printf("/%s ", label); // NON-NLS
+      return true;
+    } else {
+      
+      char[] c = new char[label.length() + 2];
+      Arrays.fill(c, ' ');
+      System.out.printf(new String(c)); // NON-NLS
+      return false;
+    }
+  }
+  
+//  private static void process(int i) {
+//    BigInteger candidate = getCandidate(i);
+//    System.out.printf("n = %3d", i); // NON-NLS
+//    if (candidate.isProbablePrime(100)) {
+//      System.out.printf(": P %s%n", candidate); // NON-NLS
+//    } else if (candidate.mod(N91).equals(BigInteger.ZERO)) {
+//      System.out.println(": /91"); // NON-NLS
+//    } else if (candidate.mod(N9901).equals(BigInteger.ZERO)) {
+//      System.out.println(": /9901"); // NON-NLS
+//    } else {
+//      BigInteger first = findFirstFactor(candidate);
+//      if (first.equals(BigInteger.ZERO)) {
+//        System.out.println(); // NON-NLS
+//      } else {
+//        System.out.printf(": /%s%n", first); // NON-NLS
+//      }
+//    }
+//  }
+  
+  private static BigInteger findFirstFactor(BigInteger candidate) {
+    BigInteger factor = SEVEN;
+//    int count = 0;
+//    while (count++ < 1000000) {
+    while (factor.compareTo(THREE_MILLION) < 0) {
+      if (candidate.mod(factor).equals(BigInteger.ZERO)) {
+        return factor;
+      }
+      factor = factor.nextProbablePrime();
+    }
+    return BigInteger.ZERO;
+  }
+
+  private static BigInteger getCandidate(int k) {
+    BigInteger product = BigInteger.ONE;
+    BigInteger sum = BigInteger.ZERO;
+    for (int i=0; i< k; ++i) {
+      sum = sum.add(product);
+      product = product.multiply(BigInteger.TEN);
+    }
+    sum = sum
+        .multiply(NINE)
+        .multiply(product)
+        .add(BigInteger.ONE);
+    return sum;
+  }
+  
+  private static String format(long ms) {
+    long tail = ms % 1000L;
+    long allSeconds = ms / 1000L;
+    long seconds = allSeconds % 60L;
+    long allMinutes = allSeconds / 60L;
+    long minutes = allMinutes % 60L;
+    long allHours = allMinutes / 60L;
+    long hours = allHours % 24L;
+    long allDays = allHours / 24L;
+    return String.format("%d days %02d:%02d:%02d.%03d", allDays, hours, minutes, seconds, tail);
+  }
+}
