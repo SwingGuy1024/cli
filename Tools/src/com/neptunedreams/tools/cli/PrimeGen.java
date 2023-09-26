@@ -64,7 +64,7 @@ public enum PrimeGen {
     return sum;
   }
   
-  private static String format(long ms) {
+  public static String format(long ms) {
     long tail = ms % 1000L;
     long allSeconds = ms / 1000L;
     long seconds = allSeconds % 60L;

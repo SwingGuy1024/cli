@@ -21,44 +21,48 @@ import java.util.TreeSet;
  * <br>P(7) = 99999990000001
  * <br>P(8) = 9999999900000001 (Prime)
  * <br>P(9) = 999999999000000001
+ * <p>These numbers may be expressed this way: P(n) = a<sup>2</sup> + a<sup>1</sup> + a<sup>0</sup> = 
+ * a<sup>2</sup> + a + 1, where a = 10<sup>n</sup> - 1</p>
+ * <p>They may be simplified to this: P(n) = 100<sup>n</sup> - 10<sup>n</sup> + 1</p>
  * <h2>Discoveries:</h2>
  * <p>1. Beyond the ones marked Prime in the examples, no others appear to be primes. I have looked as far as p(4000),
  * and haven't found any that are prime.</p>
  * <p>2. Nearly every number in this family is divisible by a smaller member of the family.</p>
  * <p>3. For any P(n) that isn't divisible by a smaller member, n will be a compound number with prime factors
  * that are all twos and threes.
- * So, when n = (2^a)(3^b), then P(n) will not be divisible by a smaller family member.</p>
+ * So, when n = (2<sup>a</sup>)(3<sup>b</sup>), then P(n) will not be divisible by a smaller family member.</p>
  * <p>I have explored as far as p(11764) and found no deviation from this rule.</p>
  * <p>4. For every member of the family that is divisible by smaller family members, there's a clear pattern to the
  * smallest divisor as n increases. The pattern isn't fully apparent until about P(36), but then it becomes very
  * clear. There are well defined exceptions to the pattern (described below), which are very common for low
  * values of n, but become rare very quickly. The pattern goes for twelve numbers before repeating itself. In the
  * following description of the pattern, I follow four conventions:
- * <br>1. # represents some integer i>=0 (unless otherwise specified), which may be different each time.
- * <br>2. The second column gives the smallest member of the family that evenly divides the first number.
- * <br>3. Q represents some multiple of 12. If a line shows a lower case q, that represents a smaller multiple of 6
- * <br>4. M refers to any number of the from (2^n)(3^n), including the number one.
- * then the earlier Q on that line.</p>
+ * <br>a. x represents some integer i >= 1, which may be different each time.
+ * <br>b. The second column gives the smallest member of the family that evenly divides the first number.
+ * <br>c. Q represents some multiple of 12.
+ * <br>d. M refers to any number of the from (2<sup>a</sup>)(3<sup>b</sup>), including the number one.</p>
  * <p>Here's the pattern:</p>
  * <pre>
- *   P(Q)    P(12×M)
+ *   <b>P(n)    Divisible by</b>
+ *   P(Q)    P(12M)
  *   P(Q+1)  P(1)
  *   P(Q+2)  P(2)
- *   P(Q+3)  P(3^#) [#>0]
- *   P(Q+4)  P(2^#) [#>1, so the minimum value is 4]
+ *   P(Q+3)  P(3<sup>x</sup>)
+ *   P(Q+4)  P(2<sup>x+1</sup>) [The minimum value is P(4)]
  *   P(Q+5)  P(1)
- *   P(Q+6)  P(6×(3^#))
+ *   P(Q+6)  P(2×3<sup>x</sup>)
  *   P(Q+7)  P(1)
- *   P(Q+8)  P(2^#) [#>1, so the minimum value is 4]
- *   P(Q+9)  P(3^#) [#>0]
+ *   P(Q+8)  P(2<sup>x+1</sup>) [The minimum value is P(4)]
+ *   P(Q+9)  P(3<sup>x</sup>) [x>0]
  *   P(Q+10) P(2)
  *   P(Q+11) P(1)
  * </pre>
  * <p>The exceptions to this rule occur when the prime factors of n are all twos and threes. In these cases,
- * as noted above, there will be no factors in the family.</p>
+ * as noted above, there will be no divisors in the family.</p>
  * <p>Several of the numbers in the second column can have many values. If we look at the most common member for
  * each part of the pattern, which is also the lowest member, the table looks like this:</p>
  * <pre>
+ *   <b>P(n)    Divisible by</b>
  *   P(Q)    P(12)
  *   P(Q+1)  P(1)*
  *   P(Q+2)  P(2)*
@@ -75,11 +79,21 @@ import java.util.TreeSet;
  * <p>The numbers with asterisks never change.</p>
  * <p>As the table shows, for the numbers p(Q), where Q is a multiple of 12, The smallest family divisor is P(12M). 
  * I have determined the value of M from the value of Q. M can be calculated as follows: First find the prime factors
- * of Q/12. Then remove all factors that aren't 2^a or 3^b. The
- * resulting product of (2^a)(3^b) will be the value of M.</p>
- * <p></p>So, for example, if Q is 8064, Q/12 is 672. The prime factorization of 672 is 2^5 × 3 × 7. We remove the
- * 7 and get 2^5 × 3, which is 96. So M is 96, which means the smallest family member that divides P(8064)
+ * of Q/12. Then remove all factors that aren't 2<sup>a</sup> or 3<sup>b</sup>. The
+ * resulting product of (2<sup>a</sup>)(3<sup>b</sup>) will be the value of M.</p>
+ * <p></p>So, for example, if Q is 8064, Q/12 is 672. The prime factorization of 672 is 2<sup>5</sup> × 3 × 7. We remove the
+ * 7 and get 2<sup>5</sup> × 3, which is 96. So M is 96, which means the smallest family member that divides P(8064)
  * is P(12 × 96), or P(1152). </p>
+ * <h1>References</h1>
+ * <a href="https://oeis.org/A168624"> Online Encyclopedia of Integer Sequences, A168624</a><br>
+ * <a href="https://oeis.org/A187868"> Online Encyclopedia of Integer Sequences, A187868</a><br>
+ * <a href="https://oeis.org/A147554"> Online Encyclopedia of Integer Sequences, A147554</a><br>
+ * <a href="https://t5k.org/curios/page.php?short=9901">Prime Curio for 9901</a><br>
+ * <a href="https://t5k.org/curios/page.php?short=99990001">Prime Curio for 99990001</a><br>
+ * <a href="https://t5k.org/curios/page.php?short=9999900001">Prime Curio for 9999900001</a><br>
+ * <a href="https://t5k.org/curios/page.php?short=9999999900000001">Prime Curio for 9999999900000001</a><br>
+ * <a href="https://math.stackexchange.com/questions/4775425/prime-numbers-p-for-which-p2-divides-p-3-what-does-p-3-mean-h">Stack Exchange Question</a><br>
+ * <a href="https://t5k.org/notes/proofs/">Selected Theorems</a><br>
  * <p>Created by IntelliJ IDEA.
  * <p>Date: 9/12/23
  * <p>Time: 1:25 PM
