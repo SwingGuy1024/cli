@@ -7,7 +7,7 @@ import java.time.ZonedDateTime;
 
 
 /**
- * Convert a number of milliseconds into an time, based on the Java Epoch.
+ * Convert a number of milliseconds into a time, based on the Java Epoch.
  * <p>
  * Rules for Shebang Java: Add a Shebang line at the top. It must start with #!, have a complete path to the java executable, and
  * must specify a source. Then, the extension must be removed from the file, and it must be made executable.
