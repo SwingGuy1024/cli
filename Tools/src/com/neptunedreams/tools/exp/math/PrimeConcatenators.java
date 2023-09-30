@@ -1,3 +1,4 @@
+//skip
 package com.neptunedreams.tools.exp.math;
 
 import java.math.BigInteger;
@@ -108,6 +109,11 @@ public enum PrimeConcatenators {
     }
   }
 
+  /**
+   * Convert milliseconds to HMS
+   * @param ms time in milliseconds
+   * @return A String of the form h:MM:ss.mmm
+   */
   public static String format(long ms) {
     long tail = ms % 1000L;
     long allSeconds = ms / 1000L;
