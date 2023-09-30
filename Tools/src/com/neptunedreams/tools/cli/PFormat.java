@@ -1,8 +1,6 @@
 package com.neptunedreams.tools.cli;
 
 import java.math.BigInteger;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * <p>Prime factorization may be done at <a href="https://www.alpertron.com.ar/ECM.HTM">Integer Factorization Calculator</a></p>
@@ -34,41 +32,27 @@ import java.util.List;
 public enum PFormat {
   ;
 
-  public static final String[] EMPTY = new String[0];
-  public static final char TIMES = '\u00D7'; // Multiplication cross
+  public static final String TIMES = "\u00d7"; // Multiplication cross
 
   public static void main(String[] args) {
     String input = String.join("", args);
-    input = input.replace(" ", "");
+    input = input.replace(" ", "");  // remove all spaces
     int eSpot = input.indexOf('=');
-    String trim1 = input.substring(eSpot+1);
-    int pSpot = trim1.indexOf('(');
-    String trim2;
-    if (pSpot >= 0) {
-      trim2 = trim1.substring(0, pSpot);
-    } else {
-      trim2 = trim1;
-    }
-    int p2Spot = input.indexOf('(');
-    String product;
-    if (p2Spot >= 0) {
-      product = input.substring(0, p2Spot);
-    } else {
-      product = input.substring(0, eSpot);
-    }
-    format(product, trim2);
+    String tail = input.substring(eSpot+1); // trim 1 is everything after = sign
+    String product = input.substring(0, eSpot);
+    format(product, tail);
   }
   
-  private static void format(String product, String fString) {
-    String[] factors = split(fString);
-    BigInteger p = new BigInteger(product);
+  private static void format(String product, String factorString) {
+    String[] factors = factorString.split(TIMES);
+    BigInteger p = new BigInteger(trimParentheses(product));
     StringBuilder builder = new StringBuilder("BigFactor ").append(product).append('\n');
-    for (String factor: factors) {
-      final BigInteger remaining = p.divide(new BigInteger(factor.trim()));
-      builder.append(factor)
-          .append("       ");
+    for (String rawFactor: factors) {
+      final String factor = trimParentheses(rawFactor);
+      final BigInteger remaining = p.divide(new BigInteger(factor));
+      builder.append(factor);
       if (remaining.compareTo(BigInteger.ONE) > 0) {
-        builder.append('(')
+        builder.append("       (")
             .append(remaining)
             .append(')');
       }
@@ -78,16 +62,11 @@ public enum PFormat {
     System.out.println(builder);
   }
   
-  private static String[] split(String s) {
-    List<String> elements = new LinkedList<>();
-    int xSpot = s.indexOf(TIMES);
-    while (xSpot >= 0) {
-      final String newS = s.substring(0, xSpot);
-      elements.add(newS);
-      s = s.substring(xSpot+1);
-      xSpot = s.indexOf(TIMES);
+  private static String trimParentheses(String text) {
+    int pSpot = text.indexOf('(');
+    if ((pSpot) >= 0) {
+      return text.substring(0, pSpot);
     }
-    elements.add(s);
-    return elements.toArray(EMPTY);
+    return text;
   }
 }
