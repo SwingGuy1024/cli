@@ -30,6 +30,7 @@ import java.util.Date;
  *   168 48
  *   264 96
  * </pre>
+ * <pre>
  * n20:
  * 
  * bigPrimes 9999999999999999999900000000000000000001
@@ -41,11 +42,11 @@ import java.util.Date;
  * If you drop off the leasing 1, the two halves complement each other:
  * 0000_9999_9998_9998
  * 9999_0000_0001_0001
- * 
+ * </pre>
  * (These two number add up to all nines.)
  * 
  * ----
- *
+ *<pre>
  * n9:
  * $ bigPrimes 999999999000000001
  * Certainty: 100
@@ -165,7 +166,7 @@ import java.util.Date;
  * 18433        (2044-digit number)
  * 61441        (2039-digit number)
  * (Unfinished)
- *
+ *</pre>
  * <p>Created by IntelliJ IDEA.
  * <p>Date: 8/10/23
  * <p>Time: 8:53 PM
