@@ -2,8 +2,9 @@ package com.neptunedreams.tools.exp.math;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * <p>Iterator to generate Three-Smooth numbers in order, which are numbers with no prime factors greater than 3.</p>
@@ -38,6 +39,8 @@ import java.util.NoSuchElementException;
  * begin after one million, start the generator with 2<sup>12</sup>3<sup>5</sup>. This produces the last
  * threeSmooth number before 1,000,000, which is 995328. Log<sub>3</sub>(1,000,000) is 12.58… so the {@code rows} list
  * will have 13 values.</p>
+ * <p>This class implements the {@code rows} array as a TreeSet instead of an ArrayList, as an experiment in
+ * performance.</p>
  * <p>To do: Add a limit member</p>
  * <p>Created by IntelliJ IDEA.
  * <p>Date: 9/26/23
@@ -45,38 +48,41 @@ import java.util.NoSuchElementException;
  *
  * @author Miguel Muñoz
  */
-public final class ThreeSmooth implements Iterator<Integer> {
+public final class ThreeSmoothTree implements Iterator<Long> {
   private static final int maxRows = 40; // Forty rows will get you to 2^63
+  private final SortedSet<Long> rows = new TreeSet<>();
+  private long maxThreePower = 1;
+
   /**
    * Create a ThreeSmooth iterator that starts from zero.
    */
-  public ThreeSmooth() {
-    rows.add(1);
+  private ThreeSmoothTree() {
+    rows.add(1L);
   }
-
+  
   /**
    * Create a ThreeSmooth iterator that starts with the specified value, or the first threeSmooth number after that value.
    * @param start Starting ThreeSmooth number. The first number returned by the iterator will be the lowest threeSmooth
    *              number greater than or equal to {@code start}
    */
-  public ThreeSmooth(int start) {
-    int nextRow = 1;
-    rows.add(nextRow);
+  private ThreeSmoothTree(long start) {
+    ArrayList<Long> tempRows = new ArrayList<>(40);
+    long nextRow = 1;
+    tempRows.add(nextRow);
     int index = 0;
-    int nextColumn = 1;
-    while (rows.get(rows.size()-1) < start) {
+    long nextColumn = 1;
+    while (tempRows.get(tempRows.size()-1) < start) {
       while (nextRow < start) {
         nextRow *= 2;
-        rows.set(index, nextRow);
+        tempRows.set(index, nextRow);
       }
       index++;
       nextColumn *= 3;
       nextRow = nextColumn;
-      rows.add(nextColumn);
+      tempRows.add(nextColumn);
     }
+    rows.addAll(tempRows);
   }
-  
-  private final List<Integer> rows = new ArrayList<>(maxRows);
   private boolean limitReached = false;
 
   @Override
@@ -84,40 +90,23 @@ public final class ThreeSmooth implements Iterator<Integer> {
     return !limitReached;
   }
 
-  public Integer next() {
+  public Long next() {
     if (limitReached) {
       throw new NoSuchElementException("Limit exceeded");
     }
-    Iterator<Integer> itr = rows.iterator();
-    int index = 0;
-    int lowIndex = 0;
-    int lowest = itr.next();
-    int nextCandidate = lowest;
-    while (itr.hasNext()) {
-      index++;
-      nextCandidate = itr.next();
-      if (nextCandidate < lowest) {
-        lowest = nextCandidate;
-        lowIndex = index;
-      }
+    long nextCandidate = rows.first();
+
+    rows.remove(nextCandidate);
+    final long newNext = nextCandidate * 2L;
+    rows.add(newNext);
+    if (nextCandidate == maxThreePower) {
+      maxThreePower *= 3L;
+      rows.add(maxThreePower);
     }
-    if ((lowIndex+1) == rows.size()) {
-      // nextCandidate is now the last element read
-      final int next3Power = nextCandidate * 3;
-      // The maximum value of the entire sequence will always be a power of two, but we max out on the 3 powers first.
-      if (next3Power < 0) {
-        rows.add(Integer.MAX_VALUE);
-      } else {
-        rows.add(next3Power);
-      }
-    }
-    int next = rows.get(lowIndex);
-    int newNext = next * 2;
-    if (newNext < next) { // test for overflow (newNext will be negative)
+    if (newNext < nextCandidate) { // test for overflow (newNext will be negative)
       limitReached = true;
     }
-    rows.set(lowIndex, next*2);
-    return next;
+    return nextCandidate;
   }
   
   private static void printExp(int base, int exp) {
@@ -155,14 +144,14 @@ public final class ThreeSmooth implements Iterator<Integer> {
   public static void main(String[] args) {
     System.out.println('\n');
 
-//        int limit = Integer.MAX_VALUE-1;
-//    int limit = 4437222213480873985L;
-    int limit = 1000000;
+//        long limit = Long.MAX_VALUE-1;
+//    long limit = 4437222213480873985L;
+    long limit = 7000;
     System.out.println("Limit: " + limit);
-    int nextThreeSmooth;
+    long nextThreeSmooth;
     int count = 0;
     long start = System.currentTimeMillis();
-    ThreeSmooth threeSmooth = new ThreeSmooth();
+    ThreeSmoothTree threeSmooth = new ThreeSmoothTree();
     do {
       nextThreeSmooth = threeSmooth.next();
       System.out.printf("%3d: %d%n", ++count, nextThreeSmooth);
@@ -172,7 +161,7 @@ public final class ThreeSmooth implements Iterator<Integer> {
     System.out.println(format(end-start));
     
     System.out.println("\n\nStarting with 243");
-    ThreeSmooth nineHundred = new ThreeSmooth(243);
+    ThreeSmoothTree nineHundred = new ThreeSmoothTree(243L);
     do {
       nextThreeSmooth = nineHundred.next();
       System.out.printf("%3d: %d%n", ++count, nextThreeSmooth);

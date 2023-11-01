@@ -13,14 +13,14 @@ public enum BigPrimes {
   ;
 
   public static void main(String[] args) {
-    if (args.length != 1) {
+    if (args.length < 1) {
       System.err.println("Prints out the prime factors of the input number. Works reasonably quickly for n < 2^31.");
       System.err.println("For 2^31-1 = 2147483647, it takes about 10 seconds on my Mac.");
       System.err.printf("Usage: primes n%n");
       System.exit(-1);
     }
 
-    BigInteger bigArg = parse(args[0]);
+    BigInteger bigArg = parse(String.join("", args)); // concatenates all arguments
     if (bigArg.compareTo(BigInteger.ZERO) < 0) {
       bigArg = bigArg.negate();
     }
