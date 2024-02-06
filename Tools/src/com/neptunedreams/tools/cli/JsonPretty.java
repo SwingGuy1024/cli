@@ -10,6 +10,8 @@ import java.util.NoSuchElementException;
 /**
  * <p>Prettify a JSON String. This will fail if an open brace or bracket appears inside quotes,
  * but this is a rare case. In most cases, it works fine.</p>
+ * <p>While you may pass the JSON String as a parameter, this is really designed to be used as
+ * the target of a pipe.</p>
  * <p>Created by IntelliJ IDEA.</p>
  * <p>Date: 2/5/24</p>
  * <p>Time: 1:28&nbsp;PM</p>
@@ -24,7 +26,13 @@ public final class JsonPretty {
     iterator = getListIterator(json);
   }
 
+  /**
+   * Launch the tool. If there are no parameters, it reads the input from System.in.
+   * @param args The arguments, which are strung together into a single String, with spaces
+   *             as delimiters.
+   */
   public static void main(String[] args) {
+    
     String input;
     if (args.length == 0) {
       try (
@@ -60,8 +68,13 @@ public final class JsonPretty {
         newLine(builder, indent);
       }
     }
-    builder.append('\n');
     return builder.toString();
+  }
+
+  private static void newLine(StringBuilder builder, String indent) {
+    builder
+        .append('\n')
+        .append(indent);
   }
 
   /**
@@ -84,7 +97,7 @@ public final class JsonPretty {
     }
     return false;
   }
-  
+
   private boolean processOpenChar(char c, char open, char close) {
     if (c == open) {
       char nxt = iterator.next();
@@ -102,20 +115,15 @@ public final class JsonPretty {
     return false;
   }
 
-  private static void newLine(StringBuilder builder, String indent) {
-    builder.append('\n')
-        .append(indent);
-  }
-
+  /**
+   * I use a ListIterator for its {@code previous()} method.
+   * @param s The String
+   * @return A ListIterator over the characters in the String.
+   */
   private static ListIterator<Character> getListIterator(String s) {
     return new ListIterator<>() {
       private final char[] data = s.toCharArray();
       private int i = 0;
-
-      @Override
-      public boolean hasNext() {
-        return i < data.length;
-      }
 
       @Override
       public Character next() {
@@ -126,11 +134,6 @@ public final class JsonPretty {
       }
 
       @Override
-      public boolean hasPrevious() {
-        return i > 0;
-      }
-
-      @Override
       public Character previous() {
         if (i <= 0) {
           throw new NoSuchElementException("previous");
@@ -138,30 +141,13 @@ public final class JsonPretty {
         return data[--i];
       }
 
-      @Override
-      public int nextIndex() {
-        return i;
-      }
-
-      @Override
-      public int previousIndex() {
-        return i - 1;
-      }
-
-      @Override
-      public void remove() {
-        throw new UnsupportedOperationException("remove");
-      }
-
-      @Override
-      public void set(Character character) {
-        throw new UnsupportedOperationException("set");
-      }
-
-      @Override
-      public void add(Character character) {
-        throw new UnsupportedOperationException("add");
-      }
+      @Override public boolean hasNext() { return i < data.length; }
+      @Override public boolean hasPrevious() { return i > 0; }
+      @Override public int nextIndex() { return i; }
+      @Override public int previousIndex() { return i - 1; }
+      @Override public void remove() { throw new UnsupportedOperationException("remove"); }
+      @Override public void set(Character character) { throw new UnsupportedOperationException("set"); }
+      @Override public void add(Character character) { throw new UnsupportedOperationException("add"); }
     };
   }
 }
