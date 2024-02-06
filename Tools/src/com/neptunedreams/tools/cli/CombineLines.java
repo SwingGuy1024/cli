@@ -8,6 +8,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
 /**
+ * Extracts text data from the clipboard and replaces internal line breaks with a single space.
  * <p>Created by IntelliJ IDEA.
  * <p>Date: 11/29/22
  * <p>Time: 4:53 PM
