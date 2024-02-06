@@ -14,18 +14,24 @@
 # Path should include ~/bin
 # ~/bin directory should exist.
 echo 'p=' $0
-### TrimTwo must be installed locally for this to work, but need not be in ~/bin:
-### This will install and update TrimTwo 
-rm TrimTwo
-echo '#!/usr/bin/java --source 11' > TrimTwo
-cat TrimTwo.java >> TrimTwo
-chmod a+x TrimTwo
+#if [[ !test TrimTwo]] then 
+  ### TrimTwo must be installed locally for this to work, but need not be in ~/bin:
+  ### This will install and update TrimTwo 
+#  rm TrimTwo
+#  echo '#!/usr/bin/java --source 11' > TrimTwo
+#  cat TrimTwo.java >> TrimTwo
+#  chmod a+x TrimTwo
+#fi
+
+#The above is commented out because we can assume TrimTwo was installed last time. If we modify 
+# TrimTwo, we just need to run this batch file from the source directory.
 
 for f in *.java
 do
 #  echo $f
-  ./TrimTwo $f ~/bin/;
+  ./TrimTwo $f ~/bin/
 done;
+cp ./doRelease.sh ~/bin
 
 
 ### The following bash script does most of what TrimTwo does, but it doesn't change the name of the output when
