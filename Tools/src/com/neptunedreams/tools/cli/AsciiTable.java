@@ -1,4 +1,4 @@
-package com.neptunedreams.tools.gui;
+package com.neptunedreams.tools.cli;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -17,13 +17,15 @@ import javax.swing.border.MatteBorder;
 /**
  * <p>ASCII Table</p>
  * <p>Sources:</p>
- * <p>&nbsp;&nbsp;https://www.ascii-code.com/</p>
- * <p>&nbsp;&nbsp;https://www.fileformat.info/info/charset/ISO-8859-1/list.htm</p>
- * <p>&nbsp;&nbsp;https://en.wikipedia.org/wiki/C0_and_C1_control_codes</p>
+ * <p>&nbsp;&nbsp;<a href="https://www.ascii-code.com/">https://www.ascii-code.com/</a></p>
+ * <p>&nbsp;&nbsp;<a href="https://www.fileformat.info/info/charset/ISO-8859-1/list.htm">https://www.fileformat.info/info/charset/ISO-8859-1/list.htm</a></p>
+ * <p>&nbsp;&nbsp;<a href="https://en.wikipedia.org/wiki/C0_and_C1_control_codes">https://en.wikipedia.org/wiki/C0_and_C1_control_codes</a></p>
  */
 public class AsciiTable extends JPanel {
+  
+  private static final Color codeBgColor = new Color(224, 224, 224);
   public static void main(String[] args) {
-    JFrame frame = new JFrame("ASCII Values");
+    JFrame frame = new JFrame("ASCII/ISO-8859-1 Values");
     frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     frame.setLocationByPlatform(true);
     frame.add(new AsciiTable());
@@ -166,14 +168,22 @@ public class AsciiTable extends JPanel {
   }
   
   private JComponent makeCharView(Code code, int value) {
-    return makeLabel(String.format(" %3d %02x %-3s ", value, value, code), code);
+    final JComponent label = makeLabel(String.format("<html>\u00a0%3d\u00a0%02x\u00a0<b><i>%-3s</i></b>\u00a0</html>", value, value, code), code);
+    label.setToolTipText(String.format("%s: %s", code, code.getDef()));
+    label.setBackground(codeBgColor);
+    label.setOpaque(true);
+    return label;
   }
   
   private JComponent makeCharView(int value) {
     if (highCodes.containsKey(value)) {
       final HighCode highCode = highCodes.get(value);
       final String s = highCode.toString();
-      return makeLabel(String.format(" %3d %02x %-3s ", value, value, s), highCode.getDef());
+      final JComponent label = makeLabel(String.format("<html>\u00a0%3d\u00a0%02x\u00a0<b>%-3s</b>\u00a0</html>", value, value, s), highCode.getDef());
+      label.setToolTipText(String.format("%s: %s", highCode, highCode.getDef()));
+      label.setBackground(codeBgColor);
+      label.setOpaque(true);
+      return label;
     }
     return makeLabel(String.format(" %3d %02x  %c  ", value, value, (char)value), "");
   }
