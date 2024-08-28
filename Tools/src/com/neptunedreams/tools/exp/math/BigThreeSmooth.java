@@ -48,6 +48,7 @@ import java.util.TreeSet;
  *
  * @author Miguel Muñoz
  */
+@SuppressWarnings("UnnecessaryUnicodeEscape")
 public final class BigThreeSmooth implements Iterator<BigInteger> {
 //  private static final int maxRows = 40; // Forty rows will get you to 2^63
   public static final BigInteger THREE = BigInteger.valueOf(3);
@@ -94,6 +95,7 @@ public final class BigThreeSmooth implements Iterator<BigInteger> {
    * @param start Starting threeSmooth number. The first number returned by the iterator will be the lowest threeSmooth
    *              number greater than or equal to {@code start}
    */
+  @SuppressWarnings("unused")
   public BigThreeSmooth(long start) {
     this(BigInteger.valueOf(start));
   }
