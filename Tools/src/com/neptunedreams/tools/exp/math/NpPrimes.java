@@ -25,9 +25,9 @@ public enum NpPrimes {
     int index = 0;
     while (threeSmooth.hasNext()) {
       long start = System.currentTimeMillis();
-      int i = threeSmooth.next();
+      long i = threeSmooth.next();
       System.out.printf("%4d: %d", ++index, i);
-      BigInteger pNum = build(i);
+      BigInteger pNum = build((int)i);
       if (pNum.isProbablePrime(1)) {
         System.out.print(" produces prime."); // NON-NLS
         if (i > 8) {
@@ -43,9 +43,9 @@ public enum NpPrimes {
 
   private static boolean loop(ThreeSmooth threeSmooth) {
     long start = System.currentTimeMillis();
-    int i= threeSmooth.next();
+    long i= threeSmooth.next();
     System.out.print(i);
-    BigInteger pNum = build(i);
+    BigInteger pNum = build((int)i);
     if (pNum.isProbablePrime(1)) {
       System.out.print(" produces prime."); // NON-NLS
       if (i > 8) {
