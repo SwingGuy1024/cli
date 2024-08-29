@@ -8,11 +8,15 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
+ * <p>I wrote this class to investigate numbers of the form 999001, or 10<sup>n</sup>(10<sup>n</sup>-1) + 1, to
+ * determine which ones are prime, and to look at the prime factors of he ones that aren't. I did this because
+ * I noticed that many members of this family have factors that are also members of this family. Those facters
+ * are usually prime factors. When they're not, they're 91.</p>
  * <h1>Summary:</h1>
  * <h2>1. Definitions:</h2>
  * <p>P(n) means a number with n nines, followed by n-1 zeroes, followed by one.</p>
  * <p>Examples:</p>
- * <br>P(1) = 91
+ * <br>P(1) = 91 = 7 * 13
  * <br>P(2) = 9901 (Prime)
  * <br>P(3) = 999001
  * <br>P(4) = 99990001 (Prime)
@@ -25,7 +29,7 @@ import java.util.TreeSet;
  * a<sup>2</sup> + a + 1, where a = 10<sup>n</sup> - 1</p>
  * <p>They may be simplified to this: P(n) = 100<sup>n</sup> - 10<sup>n</sup> + 1</p>
  * <h2>Discoveries:</h2>
- * <p>1. Beyond the ones marked Prime in the examples, no others appear to be primes. I have looked as far as p(4000),
+ * <p>1. Beyond the ones marked Prime in the examples above, no others appear to be primes. I have looked as far as p(4000),
  * and haven't found any that are prime.</p>
  * <p>2. Nearly every number in this family is divisible by a smaller member of the family.</p>
  * <p>3. For any P(n) that isn't divisible by a smaller member, n will be a compound number with prime factors
