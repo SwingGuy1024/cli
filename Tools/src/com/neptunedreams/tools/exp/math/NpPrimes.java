@@ -8,15 +8,16 @@ import java.math.BigInteger;
  * <p>Date: 9/30/23
  * <p>Time: 11:33 PM
  *
- * @author Miguel Muñoz
+ * @author Miguel Mu√±oz
  */
 public enum NpPrimes {
   ;
   private static BigInteger build(int nines) {
-    StringBuilder builder = new StringBuilder(nines * 2);
-    builder.append("9".repeat(nines));
-    builder.append("0".repeat(nines - 1));
-    builder.append('1');
+    //noinspection StringBufferReplaceableByString
+    StringBuilder builder = new StringBuilder(nines * 2)
+        .append("9".repeat(nines))
+        .append("0".repeat(nines - 1))
+        .append('1');
     return new BigInteger(builder.toString());
   }
 
