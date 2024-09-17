@@ -31,21 +31,7 @@ public enum DistAll {
   
   private static String dist(String master, String[] candidates) {
     List<String> patterns = match(master, List.of(candidates));
-    String result = wSort(patterns);    
-//    StringBuilder builder = new StringBuilder();
-//    for (Dist.Duple duple : duples) {
-//      builder
-//          .append(duple.pattern())
-//          .append(' ');
-//    }
-//    String result = builder.toString();
-    return result;
-//    for (String s : candidates) {
-//      System.err.print(s + ' ');
-//    }
-//    System.err.println();
-//    System.err.println(result);
-//    System.out.println(result);
+    return wSort(patterns);
   }
 
   private static List<String> match(String master, List<String> candidates) {
@@ -60,20 +46,11 @@ public enum DistAll {
     Map<String, Integer> wordCount = new TreeMap<>();
     sortedWords.forEach(s -> wordCount.merge(s, 1, Integer::sum));
     Collections.sort(sortedWords);
-//    String priorWord = "";
-//    for (String s : sortedWords) {
-//      if (!s.equals(priorWord)) {
-//        System.out.println();
-//      }
-//      System.out.println(s);
-//      priorWord = s;
-//    }
     List<Integer> countSet = new LinkedList<>(wordCount.values());
     final Comparator<Integer> compareTo = Integer::compareTo;
     countSet.sort(compareTo.reversed());
     StringBuilder builder = new StringBuilder();
     for (int i : countSet) {
-//      System.out.print(i); // NON-NLS
       builder.append(i).append('.');
     }
     builder.deleteCharAt(builder.length()-1);
@@ -123,6 +100,4 @@ public enum DistAll {
     }
     return -1;
   }
-
-  record Duple(String word, String pattern) { }
 }
