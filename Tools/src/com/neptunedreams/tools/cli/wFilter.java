@@ -12,7 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Examines an array of words and removes any that are past solutions to Wordle.
+ * <p>Examines an array of words and removes any that are past solutions to Wordle.</p>
+ * <p>This uses the web page at www.rockpapershotgun.com/wordle-past-answers</p> 
  * <p>Created by IntelliJ IDEA.</p>
  * <p>Date: 8/27/24</p>
  * <p>Time: 9:38 AM</p>
@@ -34,7 +35,7 @@ public enum wFilter {
     Set<String> archive = getArchive();
     StringBuilder builder = new StringBuilder();
     for (String candidate: args) {
-      if (!archive.contains(candidate)) {
+      if (!archive.contains(candidate.toUpperCase())) {
         builder.append(candidate).append(' ');
       }
     }
