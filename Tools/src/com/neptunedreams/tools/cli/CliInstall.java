@@ -75,6 +75,10 @@ public enum CliInstall {
 //    System.out.println("-- " + filePath.substring(filePath.lastIndexOf('/') + 1));
     try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
       String oneLine = reader.readLine();
+      // skip first line if it's blank:
+      if (oneLine.isEmpty()) {
+        oneLine = reader.readLine();
+      }
       String outFileName;
       int useIndex = oneLine.toLowerCase().indexOf(USE_PREFIX);
       if (useIndex >= 0) {
