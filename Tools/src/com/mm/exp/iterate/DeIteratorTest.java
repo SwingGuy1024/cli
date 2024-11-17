@@ -1,5 +1,6 @@
 package com.mm.exp.iterate;
 
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ class DeIteratorTest {
    * @param index The index of the item we just retrieved
    * @param retrievedValue The value we just retrieved
    */
-  private void assertAllMethods(int index, String retrievedValue) {
+  private void assertAllMethods(int index, @Nullable String retrievedValue) {
 
     int expectedPreviousIndex = index - 1;
     int expectedNextIndex;

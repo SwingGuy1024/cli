@@ -72,7 +72,7 @@ public class DeIterator<E> {
 
   /**
    <p>* Returns the next element in the list. This method may be called repeatedly to iterate through the list,
-   or intermixed with called to {@link #previous}() to go back and forth.</p>
+   or intermixed with called to {@link #previous} to go back and forth.</p>
    * @return The next element in the list.
    * @throws NoSuchElementException if there is no next element
    */
@@ -95,7 +95,7 @@ public class DeIterator<E> {
 
   /**
    * <p>Return the previous element in the list. This method may be called repeatedly to iterate through the list
-   * backwards, or intermixed with calls to {@link #next}() to go back and forth.</p>
+   * backwards, or intermixed with calls to {@link #next} to go back and forth.</p>
    * @return The previous element in the list.
    * @throws NoSuchElementException if there is no previous element
    */
@@ -190,14 +190,35 @@ public class DeIterator<E> {
     }
   }
 
+  /**
+   * Replaces the last element returned by {@link #next} or
+   * {@link #previous} with the specified element (optional operation).
+   * This call can be made only if neither {@link #remove} nor {@link
+   * #add} have been called after the last call to {@code next} or
+   * {@code previous}.
+   *
+   * @param e the element with which to replace the last element returned by
+   *          {@code next} or {@code previous}
+   * @throws UnsupportedOperationException if the {@code set} operation
+   *                                       is not supported by this list iterator wrapped by this class
+   * @throws ClassCastException            if the class of the specified element
+   *                                       prevents it from being added to this list
+   * @throws IllegalArgumentException      if some aspect of the specified
+   *                                       element prevents it from being added to this list
+   * @throws IllegalStateException         if neither {@code next} nor
+   *                                       {@code previous} have been called, or {@code remove} or
+   *                                       {@code add} have been called after the last call to
+   *                                       {@code next} or {@code previous}
+   */
   public void set(E e) {
     wrapped.set(e);
   }
 
   /**
-   * <p>Add an element into the list. If the last retrieval call was {@code next()}, it inserts the new element after the element that
-   * {@code next()} just returned. Likewise, if the last retrieval call was {@code previous()}, it inserts the new
-   * element before the element that {@code previous()} just returned.</p>
+   * <p>Inserts the specified element into the list (optional operation). If the last retrieval call was
+   * {@code next()}, it inserts the new element after the element that {@code next()} just returned. Likewise,
+   * if the last retrieval call was {@code previous()}, it inserts the new element before the element that
+   * {@code previous()} just returned.</p>
    * <p>If no retrieval method has been called yet, it inserts the element at the beginning of the list. If the last
    * element retrieved was removed, it replaces the removed element. More precicely, it inserts the new element before
    * the element that would be returned by a call to {@code next()}, if any, or at the end of the list.</p>
