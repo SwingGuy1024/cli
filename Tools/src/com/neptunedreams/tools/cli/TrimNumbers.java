@@ -11,13 +11,14 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 /**
- * Sometimes, when code is copied from a web page, line numbers are interspersed through the code, making it hard to past it into a valid 
- * source file. When the line numbers are alone on a line, this utility may be used to skip over the numbered lines.
- * <p>Created by IntelliJ IDEA.
- * <p>Date: 1/5/21
- * <p>Time: 4:19 PM
+ * <p>Sometimes, when code is copied from a web page, line numbers are interspersed through the code, making it hard to
+ * paste it into a valid source file. When the line numbers are alone on a line, this utility may be used to skip over
+ * the numbered lines.</p>
+ * <p>Created by IntelliJ IDEA.</p>
+ * <p>Date: 1/5/21</p>
+ * <p>Time: 4:19 PM</p>
  *
- * @author Miguel Mu\u00f1oz
+ * @author Miguel Muñoz
  */
 public enum TrimNumbers {
   ;
@@ -40,6 +41,7 @@ public enum TrimNumbers {
       StringSelection output = new StringSelection(writer.toString());
       clipboard.setContents(output, output);
     }
+    System.exit(0); // Avoids bug where VM prints out diagnostics.
   }
   
   private static boolean isNumber(String s) {
