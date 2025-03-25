@@ -15,6 +15,8 @@ import javax.swing.WindowConstants;
 import javax.swing.border.MatteBorder;
 
 /**
+ * Generates an Ascii Table in a window
+ * 
  * <p>ASCII Table</p>
  * <p>Sources:</p>
  * <p>&nbsp;&nbsp;<a href="https://www.ascii-code.com/">https://www.ascii-code.com/</a></p>
@@ -24,8 +26,8 @@ import javax.swing.border.MatteBorder;
 public class AsciiTable extends JPanel {
   
   private static final Color codeBgColor = new Color(224, 224, 224);
-  public static void main(String[] args) {
-    JFrame frame = new JFrame("ASCII/ISO-8859-1 Values");
+  public static void main(final String[] args) {
+    final JFrame frame = new JFrame("ASCII/ISO-8859-1 Values");
     frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     frame.setLocationByPlatform(true);
     frame.add(new AsciiTable());
@@ -68,7 +70,7 @@ public class AsciiTable extends JPanel {
     US("Unit Separator");
     
     private final String def;
-    Code(String def) {
+    Code(final String def) {
       this.def = def;
     }
     
@@ -90,7 +92,7 @@ public class AsciiTable extends JPanel {
     VTS(0x8A, "Line Tabulation Set"),
     PLD(0x8B, "Partial Line Forward"),
     PLU(0x8C, "Partial Line Backward"),
-    RI(0x8D, "Reverse Line Feed"),
+    RI (0x8D, "Reverse Line Feed"),
     SS2(0x8E, "Single Shift 2"),
     SS3(0x8F, "Single Shift 3"),
     DCS(0x90, "Device Control String"),
@@ -98,16 +100,16 @@ public class AsciiTable extends JPanel {
     PU2(0x92, "Private Use 2"),
     STS(0x93, "Set Transmit State"),
     CCH(0x94, "Cancel Character"),
-    MW(0x95, "Message Waiting"),
+    MW (0x95, "Message Waiting"),
     SPA(0x96, "Start of Guarded ARea"),
     EPA(0x97, "End of Guarded Area"),
     SOS(0x98, "Start of String"),
     SGC(0x99, "Single Graphic Character Introducer"),
     SCI(0x9A, "Single Character Introducer"),
     CSI(0x9B, "Control Sequence Introducer"),
-    ST(0x9C, "String Terminator"),
+    ST (0x9C, "String Terminator"),
     OSC(0x9D, "Operating System Command"),
-    PM(0x9E, "Privacy Message"),
+    PM (0x9E, "Privacy Message"),
     APC(0x9F, "Application Program Command"),
     NBS(0xA0, "Non-Breaking Space"),
     SHY(0xAD, "Soft Hyphen");
@@ -115,7 +117,7 @@ public class AsciiTable extends JPanel {
     private final String def;
     private final int key;
     
-    HighCode(int key, String def) {
+    HighCode(final int key, final String def) {
       this.def = def;
       this.key = key;
     }
@@ -132,8 +134,8 @@ public class AsciiTable extends JPanel {
   private final Map<Integer, HighCode> highCodes = makeHighCodes();
   
   private Map<Integer, HighCode> makeHighCodes() {
-    Map<Integer, HighCode> highMap = new HashMap<>();
-    for (HighCode highCode: HighCode.values()) {
+    final Map<Integer, HighCode> highMap = new HashMap<>();
+    for (final HighCode highCode: HighCode.values()) {
       highMap.put(highCode.getKey(), highCode);
     }
     
@@ -146,12 +148,12 @@ public class AsciiTable extends JPanel {
   AsciiTable() {
     super(new GridLayout(0, 8));
     for (int i=0; i<8; ++i) {
-      JComponent label = makeLabel(" dec hx  c", "");
+      final JComponent label = makeLabel(" dec hx  c", "");
       label.setBorder(new MatteBorder(0, 1, 1, 0, Color.BLACK));
       add(label);
     }
-    Code[] values = Code.values();
-    List<JComponent> labelList = new LinkedList<>();
+    final Code[] values = Code.values();
+    final List<JComponent> labelList = new LinkedList<>();
     for (int i=0; i<32; ++i) {
       labelList.add(makeCharView(values[i], i));
     }
@@ -167,33 +169,42 @@ public class AsciiTable extends JPanel {
     setBorder(new MatteBorder(1, 0, 1, 1, Color.BLACK));
   }
   
-  private JComponent makeCharView(Code code, int value) {
-    final JComponent label = makeLabel(String.format("<html>\u00a0%3d\u00a0%02x\u00a0<b><i>%-3s</i></b>\u00a0</html>", value, value, code), code);
+  private JComponent makeCharView(final Code code, final int value) {
+    final String text = String.format("<html> %3d %02x <b><i>%-3s</i></b></html>", value, value, code);
+    // \u00a0 is a non-breaking space
+    final JComponent label = makeLabel(text.replace(' ', '\u00a0'), code);
+    label.setFont(displayFont);
     label.setToolTipText(String.format("%s: %s", code, code.getDef()));
     label.setBackground(codeBgColor);
     label.setOpaque(true);
     return label;
   }
   
-  private JComponent makeCharView(int value) {
+  private JComponent makeCharView(final int value) {
     if (highCodes.containsKey(value)) {
       final HighCode highCode = highCodes.get(value);
       final String s = highCode.toString();
-      final JComponent label = makeLabel(String.format("<html>\u00a0%3d\u00a0%02x\u00a0<b>%-3s</b>\u00a0</html>", value, value, s), highCode.getDef());
+      final String format = String.format("<html> %3d %02x <b><i>%-3s</i></b></html>", value, value, s);
+      final JComponent label = makeLabel(format, highCode.getDef());
       label.setToolTipText(String.format("%s: %s", highCode, highCode.getDef()));
-      label.setBackground(codeBgColor);
+      label.setBackground(codeBgColor); // Light gray
       label.setOpaque(true);
+      label.setBorder(new MatteBorder(0, 1, 0, 0, Color.BLACK));
       return label;
     }
     return makeLabel(String.format(" %3d %02x  %c  ", value, value, (char)value), "");
   }
   
-  private JComponent makeLabel(String s, Code code) {
+  private JComponent makeLabel(final String s, final Code code) {
     return makeLabel(s, code.getDef());
   }
   
-  private JComponent makeLabel(String s, String def) {
-    JLabel label = new JLabel(s);
+  private JComponent makeLabel(String s, final String def) {
+    // Convert all spaces to non-breaking spaces. \u00a0 is a non-breaking space
+    // (Html condenses multiple spaces into a single space. This prevents that. The spaces got inserted by the 
+    // String.format() call, which pads leading spaces into 1- and 2-digit numbers.)
+    s = s.replace(' ', '\u00a0');
+    final JLabel label = new JLabel(s);
     label.setFont(displayFont);
     label.setBorder(new MatteBorder(0, 1, 0, 0, Color.BLACK));
     if (!def.isEmpty()) {
