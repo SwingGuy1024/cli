@@ -25,6 +25,7 @@ public enum BreakLines {
     StringSelection filteredContent = new StringSelection(filter(data));
     systemClipboard.setContents(filteredContent, filteredContent);
     System.out.println(filter(data));
+    System.exit(0); // Avoids bug where VM prints out diagnostics.
   }
   
   private static String filter(String data) {
