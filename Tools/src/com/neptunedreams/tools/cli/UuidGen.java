@@ -31,6 +31,7 @@ public final class UuidGen {
     } else {
       System.out.println(uuid);
     }
+    System.exit(0); // Avoids bug where VM prints out diagnostics.
   }
 
   private static UuidGen processArgs(String[] args) {
