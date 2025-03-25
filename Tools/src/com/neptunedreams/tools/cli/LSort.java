@@ -65,6 +65,7 @@ public enum LSort {
     StringSelection stringSelection = new StringSelection(result);
     Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, stringSelection);
     System.out.println(result);
+    System.exit(0); // Avoids bug where VM prints out diagnostics.
   }
 
   static class StringBuilderCollector implements Collector<Integer, StringBuilder, StringBuilder> {
