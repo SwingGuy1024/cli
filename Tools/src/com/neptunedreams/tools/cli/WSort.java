@@ -75,6 +75,7 @@ public enum WSort {
     StringSelection ss = new StringSelection(builder.toString());
     Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
     System.out.println();
+    System.exit(0); // Avoids bug where VM prints out diagnostics.
   }
 
   @SuppressWarnings("SameParameterValue")
