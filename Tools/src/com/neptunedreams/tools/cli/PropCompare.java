@@ -36,6 +36,7 @@ public enum PropCompare {
       default:
         showUsageAndExit();
     }
+    System.exit(0); // Avoids bug where VM prints out diagnostics.
   }
 
   private static Properties getPropertiesFromClipboard() throws UnsupportedFlavorException, IOException {
