@@ -10,7 +10,7 @@ import java.awt.datatransfer.StringSelection;
  * <p>Date: 11/1/23
  * <p>Time: 2:38 AM
  *
- * @author Miguel Mu–oz
+ * @author Miguel Muï¿½oz
  */
 public enum TitleCase {
   ;
@@ -26,6 +26,7 @@ public enum TitleCase {
       StringSelection ss = new StringSelection(out);
       Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
     }
+    System.exit(0); // Avoids bug where VM prints out diagnostics.
   }
 
   private static void process(String arg, StringBuilder builder) {
