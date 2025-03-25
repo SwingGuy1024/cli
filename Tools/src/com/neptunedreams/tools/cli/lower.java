@@ -8,7 +8,7 @@ import java.awt.datatransfer.StringSelection;
  * <p>Date: 11/1/23
  * <p>Time: 2:06 AM
  *
- * @author Miguel Mu–oz
+ * @author Miguel Muï¿½oz
  */
 public enum lower {
   ;
@@ -22,5 +22,6 @@ public enum lower {
     System.out.println(out);
     StringSelection ss = new StringSelection(out);
     Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+    System.exit(0); // Avoids bug where VM prints out diagnostics.
   }
 }
