@@ -24,6 +24,7 @@ public enum HeaderPaste {
     String data = systemClipboard.getData(DataFlavor.stringFlavor).toString();
     StringSelection filteredContent = new StringSelection(filter(data));
     systemClipboard.setContents(filteredContent, filteredContent);
+    System.exit(0); // Avoids bug where VM prints out diagnostics.
   }
 
   private static String filter(String data) {
